@@ -6,7 +6,6 @@ using openDicom.File;
 using openDicom.DataStructure.DataSet;
 using openDicom.DataStructure;
 using System.Collections.Generic;
-using System.Collections
 using openDicom.Image;
 using System.Linq;
 using System.Runtime.InteropServices;
