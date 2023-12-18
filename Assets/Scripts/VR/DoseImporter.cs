@@ -6,6 +6,7 @@ using openDicom.File;
 using openDicom.DataStructure.DataSet;
 using openDicom.DataStructure;
 using System.Collections.Generic;
+using System.Collections
 using openDicom.Image;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -66,6 +67,7 @@ namespace UnityVolumeRendering
         public VolumeDataset ReadDoseFile(string filePath)
         {
             AcrNemaFile file = LoadDoseFile(filePath);
+            float[] CTdataset = getCTDataset();
 
             PixelData data = file.PixelData;
             Tag NumberOfFramesTag = new Tag("(0028, 0008)");
@@ -117,6 +119,13 @@ namespace UnityVolumeRendering
 
             return dataset;
 
+        }
+
+        public static float[] getCTDataset()
+        {
+            VolumeRenderedObject volObj = UnityEngine.Object.FindObjectsOfType<VolumeRenderedObject>()[0];
+            VolumeDataset dataset = volObj.dataset;
+            return dataset.data;
         }
 
         public static int[] ToPixelArray(PixelData pixelData)
