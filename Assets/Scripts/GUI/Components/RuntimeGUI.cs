@@ -19,6 +19,7 @@ namespace UnityVolumeRendering
         private const string assetName = "Interactions.Interactable";
         [SerializeField]
         private const string assetSuffix = ".prefab";
+        private List<string> CTFilePaths;
 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
@@ -32,11 +33,11 @@ namespace UnityVolumeRendering
                     .Where(p => p.EndsWith(".dcm", StringComparison.InvariantCultureIgnoreCase) || p.EndsWith(".dicom", StringComparison.InvariantCultureIgnoreCase) || p.EndsWith(".dicm", StringComparison.InvariantCultureIgnoreCase));
 
                 // Get all files in DICOM directory
-                List<string> filePaths = Directory.GetFiles(result.path).ToList();
+                CTFilePaths = Directory.GetFiles(result.path).ToList();
                 // Create importer
                 IImageSequenceImporter importer = ImporterFactory.CreateImageSequenceImporter(ImageSequenceFormat.DICOM);
                 // Load list of DICOM series (normally just one series)
-                IEnumerable<IImageSequenceSeries> seriesList = importer.LoadSeries(filePaths);
+                IEnumerable<IImageSequenceSeries> seriesList = importer.LoadSeries(CTFilePaths);
                 // There will usually just be one series
                 foreach (IImageSequenceSeries series in seriesList)
                 {
@@ -70,27 +71,56 @@ namespace UnityVolumeRendering
 
         public void OnOpenDoseResultVR(RuntimeFileBrowser.DialogResult result)
         {
+
             if (!result.cancelled)
             {
-                bool recursive = true;
-                //DespawnAllDatasetsVR();
 
+                bool recursive = true;
                 IEnumerable<string> fileCandidates = Directory.EnumerateFiles(result.path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
                     .Where(p => p.EndsWith("suma.dcm", StringComparison.InvariantCultureIgnoreCase) || p.EndsWith("suma.dicom", StringComparison.InvariantCultureIgnoreCase) || p.EndsWith("suma.dicm", StringComparison.InvariantCultureIgnoreCase));
 
-                string filePath = fileCandidates.First();
+                string doseFilePath = fileCandidates.First();
 
                 // Create importer
                 DoseImporter importer = new DoseImporter();
+                // Load list of DICOM series (normally just one series)
+                IEnumerable<IImageSequenceSeries> seriesList = importer.LoadSeries(CTFilePaths);
+                // There will usually just be one series
+                foreach (IImageSequenceSeries series in seriesList)
+                {
+                    // Import single DICOM series along with DICOM RT Dose
+                    VolumeDataset dataset = importer.ImportSeries(series, doseFilePath);
 
-                // Import single DICOm series
-                VolumeDataset dataset = importer.ReadDoseFile(filePath);
-                DoseVolumeRenderedObject obj = VolumeObjectFactory.CreateDoseObject(dataset);
-                obj.transform.position = new Vector3(2.245f, 2.63f, -1.95f);
-                obj.transform.Rotate(0, 0, -90);
+                    DoseVolumeRenderedObject obj = VolumeObjectFactory.CreateDoseObject(dataset);
+                    obj.transform.position = new Vector3(2.245f, 2.63f, -1.95f);
+                    obj.transform.Rotate(0, 0, -90);
 
+                }
 
             }
+
+
+            //if (!result.cancelled)
+            //{
+            //    bool recursive = true;
+            //    //DespawnAllDatasetsVR();
+
+            //    IEnumerable<string> fileCandidates = Directory.EnumerateFiles(result.path, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
+            //        .Where(p => p.EndsWith("suma.dcm", StringComparison.InvariantCultureIgnoreCase) || p.EndsWith("suma.dicom", StringComparison.InvariantCultureIgnoreCase) || p.EndsWith("suma.dicm", StringComparison.InvariantCultureIgnoreCase));
+
+            //    string doseFilePath = fileCandidates.First();
+
+            //    // Create importer
+            //    DoseImporter importer = new DoseImporter();
+
+            //    // Import single DICOm series
+            //    VolumeDataset dataset = importer.ReadDoseFile(doseFilePath);
+            //    DoseVolumeRenderedObject obj = VolumeObjectFactory.CreateDoseObject(dataset);
+            //    obj.transform.position = new Vector3(2.245f, 2.63f, -1.95f);
+            //    obj.transform.Rotate(0, 0, -90);
+
+
+            //}
 
         }
 
