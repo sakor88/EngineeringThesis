@@ -356,7 +356,17 @@
 
                 // Write fragment output
                 frag_out output;
-                output.colour = float4(maxDensity, 1.0f - maxDensity, 0.0f, 0.5); // maximum intensity
+
+                if (maxDensity < -1024.0f)
+                {
+                   // maxDensity = maxDensity + 10000.0f;
+                   // output.colour = float4(maxDensity, 1.0f - maxDensity, 0.0f, 0.5f);
+                    output.colour = float4(1.0f, 1.0f, 1.0f, maxDensity);
+                }
+                else
+                {
+                    output.colour = float4(1.0f, 1.0f, 1.0f, maxDensity);
+                }
                 
 #if DEPTHWRITE_ON
                 output.depth = localToDepth(maxDensityPos - float3(0.5f, 0.5f, 0.5f));

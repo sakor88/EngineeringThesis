@@ -155,8 +155,9 @@ namespace UnityVolumeRendering
             DataElement row = doseFile.DataSet[Rows];
             DataElement col = doseFile.DataSet[Columns];
             DataElement NoF = doseFile.DataSet[NumberOfFramesTag];
-            doseDimX = (int)Convert.ToInt16(row.Value[0]);
-            doseDimY = (int)Convert.ToInt16(col.Value[0]);
+            // TU JEST NA RAZIE ZAMIENIONE -------------------------------------------------------------------
+            doseDimX = (int)Convert.ToInt16(col.Value[0]);
+            doseDimY = (int)Convert.ToInt16(row.Value[0]);
             doseDimZ = (int)Convert.ToInt16(NoF.Value[0]);
 
             if (doseFile.DataSet.Contains(ImagePosition))
@@ -179,52 +180,98 @@ namespace UnityVolumeRendering
             int dimension = dataset.dimX * dataset.dimY * dataset.dimZ;
             dataset.data = new float[dimension];
 
-            
+
+            Tag ImagePositionPatient = new Tag("(0020, 0032)");
+
+            DataElement imagePosCT = CTfiles[0].file.DataSet[ImagePositionPatient];
+
+            int[] startingPixel = new int[2];
+            startingPixel[0] = Convert.ToInt32(imagePosCT.Value[0]);
+            startingPixel[1] = Convert.ToInt32(imagePosCT.Value[1]);
+
+
+            DataElement imagePosDose = doseFile.DataSet[ImagePositionPatient];
+
+            int[] startingPixelDose = new int[2];
+            startingPixelDose[0] = Convert.ToInt32(imagePosDose.Value[0]);
+            startingPixelDose[1] = Convert.ToInt32(imagePosDose.Value[1]);
+
+            int doseStartRow = startingPixelDose[0];
+            int doseStartCol = startingPixelDose[1];
+
+            float doseEndRow = doseStartRow + pixelSpacingf * doseDimX;
+            float doseEndCol = doseStartCol + pixelSpacingf * doseDimY;
+
+            int rowOffset = doseStartRow - startingPixel[0];
+            int colOffset = doseStartCol - startingPixel[1];
+
+            //Debug.Log("doseStartRow: " + doseStartRow + " doseEndRow:" + doseEndRow);
+            //Debug.Log("doseStartCol: " + doseStartCol + " doseEndCol:" + doseEndCol);
+
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
             {
 
                 DICOMSliceFile slice = CTfiles[iSlice];
-                PixelData pixelData = slice.file.PixelData;
-                int[] pixelArr = ToPixelArray(pixelData);
-                if (pixelArr == null) // This should not happen
-                    pixelArr = new int[pixelData.Rows * pixelData.Columns];
+                PixelData CTpixelData = slice.file.PixelData;
+                int[] CTpixelArr = ToPixelArray(CTpixelData);
+                if (CTpixelArr == null) // This should not happen
+                    CTpixelArr = new int[CTpixelData.Rows * CTpixelData.Columns];
 
                 DataElement imageZPosEle = slice.file.DataSet[ImagePosition];
                 float imageZPos = (float)Convert.ToDouble(imageZPosEle.Value[2]);
-                Debug.Log("Z position: " +  imageZPos);
+                //Debug.Log("Z position: " + imageZPos);
 
-                if(( imageZPos < doseZEndPos && imageZPos > doseZStartPos) || (imageZPos > doseZEndPos && imageZPos < doseZStartPos))
+                PixelData dosePixelData = doseFile.PixelData;
+                int[] dosePixelArr = ToPixelArray(dosePixelData);
+
+
+
+                if ((imageZPos <= doseZEndPos && imageZPos >= doseZStartPos) || (imageZPos >= doseZEndPos && imageZPos <= doseZStartPos))
                 {
                     int doseZIndex = (int)Math.Round((imageZPos - doseZStartPos) / sliceThickness);
-                    Debug.Log("Dose Z index: " + doseZIndex);
+                    //Debug.Log("Dose Z index: " + doseZIndex);
 
-                    //TO DO ---------- POPULATE THE ARRAY WITH DOSE AND CT DATA
-
-                    for (int iRow = 0; iRow < pixelData.Rows; iRow++)
+                    for (int iRow = 0; iRow < CTpixelData.Rows; iRow++)
                     {
-                        for (int iCol = 0; iCol < pixelData.Columns; iCol++)
+                        for (int iCol = 0; iCol < CTpixelData.Columns; iCol++)
                         {
-                            int pixelIndex = (iRow * pixelData.Columns) + iCol;
-                            int dataIndex = (iSlice * pixelData.Columns * pixelData.Rows) + (iRow * pixelData.Columns) + iCol;
+                            int pixelIndex = (iRow * CTpixelData.Columns) + iCol;
+                            int dataIndex = (iSlice * CTpixelData.Columns * CTpixelData.Rows) + (iRow * CTpixelData.Columns) + iCol;
 
-                            int pixelValue = pixelArr[pixelIndex];
-                            float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
+                            int realRow = startingPixel[0] + iRow;
+                            int realCol = startingPixel[1] + iCol;
+                            int dosePixelIndex = iSlice * doseDimX * doseDimY + pixelIndex - iRow * rowOffset - colOffset;
 
-                            dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
+                            if (realRow > doseStartRow && realRow < doseEndRow && realCol > doseStartCol && realCol < doseEndCol)
+                            {
+                                int pixelValue = dosePixelArr[dosePixelIndex];
+                                float grayValue = pixelValue * 6.3e-5f;
+                                dataset.data[dataIndex] = pixelValue;
+
+
+                            }
+                            else
+                            {
+                                int pixelValue = CTpixelArr[pixelIndex];
+                                float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
+                                dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
+                            }
+
+
                         }
                     }
                 }
                 else
                 {
-                    for (int iRow = 0; iRow < pixelData.Rows; iRow++)
+                    for (int iRow = 0; iRow < CTpixelData.Rows; iRow++)
                     {
-                        for (int iCol = 0; iCol < pixelData.Columns; iCol++)
+                        for (int iCol = 0; iCol < CTpixelData.Columns; iCol++)
                         {
-                            int pixelIndex = (iRow * pixelData.Columns) + iCol;
-                            int dataIndex = (iSlice * pixelData.Columns * pixelData.Rows) + (iRow * pixelData.Columns) + iCol;
+                            int pixelIndex = (iRow * CTpixelData.Columns) + iCol;
+                            int dataIndex = (iSlice * CTpixelData.Columns * CTpixelData.Rows) + (iRow * CTpixelData.Columns) + iCol;
 
-                            int pixelValue = pixelArr[pixelIndex];
+                            int pixelValue = CTpixelArr[pixelIndex];
                             float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
 
                             dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
@@ -294,6 +341,7 @@ namespace UnityVolumeRendering
                 Tag locTag = new Tag("(0020,1041)");
                 Tag posTag = new Tag("(0020,0032)");
                 Tag interceptTag = new Tag("(0028,1052)");
+                
                 Tag slopeTag = new Tag("(0028,1053)");
                 Tag pixelSpacingTag = new Tag("(0028,0030)");
                 Tag seriesUIDTag = new Tag("(0020,000E)");
