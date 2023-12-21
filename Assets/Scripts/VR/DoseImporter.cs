@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UIElements;
 using System.Data;
+using Zinnia.Data.Type.Transformation.Aggregation;
 
 namespace UnityVolumeRendering
 {
@@ -102,7 +103,7 @@ namespace UnityVolumeRendering
             return new List<DICOMSeries>(seriesByUID.Values);
         }
 
-        public VolumeDataset ImportSeries(IImageSequenceSeries series, string  doseFilePath)
+        public VolumeDataset ImportSeries(IImageSequenceSeries series, string doseFilePath)
         {
             DICOMSeries dicomSeries = (DICOMSeries)series;
             List<DICOMSliceFile> CTfiles = dicomSeries.dicomFiles;
@@ -208,6 +209,9 @@ namespace UnityVolumeRendering
             //Debug.Log("doseStartRow: " + doseStartRow + " doseEndRow:" + doseEndRow);
             //Debug.Log("doseStartCol: " + doseStartCol + " doseEndCol:" + doseEndCol);
 
+            PixelData dosePixelData = doseFile.PixelData;
+            int[] dosePixelArr = ToPixelArray(dosePixelData);
+            int[] superResPixelArr = superRes(dosePixelArr, doseDimX, doseDimY, pixelSpacingf, 1.0f);
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
             {
@@ -221,11 +225,6 @@ namespace UnityVolumeRendering
                 DataElement imageZPosEle = slice.file.DataSet[ImagePosition];
                 float imageZPos = (float)Convert.ToDouble(imageZPosEle.Value[2]);
                 //Debug.Log("Z position: " + imageZPos);
-
-                PixelData dosePixelData = doseFile.PixelData;
-                int[] dosePixelArr = ToPixelArray(dosePixelData);
-
-
 
                 if ((imageZPos <= doseZEndPos && imageZPos >= doseZStartPos) || (imageZPos >= doseZEndPos && imageZPos <= doseZStartPos))
                 {
@@ -241,14 +240,13 @@ namespace UnityVolumeRendering
 
                             int realRow = startingPixel[0] + iRow;
                             int realCol = startingPixel[1] + iCol;
-                            int dosePixelIndex = iSlice * doseDimX * doseDimY + pixelIndex - iRow * rowOffset - colOffset;
+                            int dosePixelIndex = /*iSlice * doseDimX * doseDimY + */ pixelIndex - iRow * rowOffset - colOffset;
 
                             if (realRow > doseStartRow && realRow < doseEndRow && realCol > doseStartCol && realCol < doseEndCol)
                             {
                                 int pixelValue = dosePixelArr[dosePixelIndex];
                                 float grayValue = pixelValue * 6.3e-5f;
                                 dataset.data[dataIndex] = pixelValue;
-
 
                             }
                             else
@@ -278,7 +276,7 @@ namespace UnityVolumeRendering
                         }
                     }
                 }
-                
+
             }
 
             if (CTfiles[0].pixelSpacing > 0.0f)
@@ -328,6 +326,14 @@ namespace UnityVolumeRendering
 
         }
 
+        //a function to super-res the dose data from 2.5 pixel size to 1.0 pixel size:
+        int[] superRes(int[] originalArr, int rows, int cols, float pxSizeBefore, float pxSizeAfter)
+        {
+            float pxMultiplier = pxSizeBefore / pxSizeAfter;
+            int[] superResArr = new int[(int)Math.Floor(rows * cols * Math.Pow(pxMultiplier, 2))];
+
+            return superResArr;
+        }
         private DICOMSliceFile ReadDICOMFile(string filePath)
         {
             AcrNemaFile file = LoadFile(filePath);
@@ -341,7 +347,7 @@ namespace UnityVolumeRendering
                 Tag locTag = new Tag("(0020,1041)");
                 Tag posTag = new Tag("(0020,0032)");
                 Tag interceptTag = new Tag("(0028,1052)");
-                
+
                 Tag slopeTag = new Tag("(0028,1053)");
                 Tag pixelSpacingTag = new Tag("(0028,0030)");
                 Tag seriesUIDTag = new Tag("(0020,000E)");
@@ -553,5 +559,3 @@ namespace UnityVolumeRendering
         }
     }
 }
-
-
