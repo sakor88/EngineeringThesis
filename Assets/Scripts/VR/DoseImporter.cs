@@ -8,11 +8,7 @@ using openDicom.DataStructure;
 using System.Collections.Generic;
 using openDicom.Image;
 using System.Linq;
-using System.Runtime.InteropServices;
-using UnityEngine.SocialPlatforms;
-using UnityEngine.UIElements;
 using System.Data;
-using Zinnia.Data.Type.Transformation.Aggregation;
 
 namespace UnityVolumeRendering
 {
@@ -211,7 +207,7 @@ namespace UnityVolumeRendering
 
             PixelData dosePixelData = doseFile.PixelData;
             int[] dosePixelArr = ToPixelArray(dosePixelData);
-            int[] superResPixelArr = superRes(dosePixelArr, doseDimX, doseDimY, pixelSpacingf, 1.0f);
+            int[] superResPixelArr = superRes(dosePixelArr, doseDimX, doseDimY, doseDimZ,  pixelSpacingf, 1.0f);
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
             {
@@ -326,14 +322,91 @@ namespace UnityVolumeRendering
 
         }
 
-        //a function to super-res the dose data from 2.5 pixel size to 1.0 pixel size:
-        int[] superRes(int[] originalArr, int rows, int cols, float pxSizeBefore, float pxSizeAfter)
-        {
-            float pxMultiplier = pxSizeBefore / pxSizeAfter;
-            int[] superResArr = new int[(int)Math.Floor(rows * cols * Math.Pow(pxMultiplier, 2))];
 
+
+        int[] superRes(int[] originalArr, int rows, int cols, int slices, float pxSizeBefore, float pxSizeAfter)
+        {
+
+            //float pxMultiplier = pxSizeBefore / pxSizeAfter;
+            //int[] superResArr = new int[(int)Math.Floor(rows * cols * Math.Pow(pxMultiplier, 2))];
+            // Calculate the scaling factor for each dimension
+            double scaleFactor = pxSizeBefore / pxSizeAfter;
+
+            int newXDim = (int)Math.Ceiling(rows / scaleFactor);
+            int newYDim = (int)Math.Ceiling(cols / scaleFactor);
+            int newZDim = (int)Math.Ceiling(slices / scaleFactor);
+
+            double[] xOriginal = new double[rows];
+            double[] yOriginal = new double[cols];
+            double[] zOriginal = new double[slices];
+
+            double[] xNew = new double[newXDim];
+            double[] yNew = new double[newYDim];
+            double[] zNew = new double[newZDim];
+
+            for (int i = 0; i < rows; i++)
+                xOriginal[i] = i * pxSizeBefore;
+
+            for (int j = 0; j < cols; j++)
+                yOriginal[j] = j * pxSizeBefore;
+
+            for (int k = 0; k < slices; k++)
+                zOriginal[k] = k * pxSizeBefore;
+
+            for (int i = 0; i < newXDim; i++)
+                xNew[i] = i * pxSizeAfter;
+
+            for (int j = 0; j < newYDim; j++)
+                yNew[j] = j * pxSizeAfter;
+
+            for (int k = 0; k < newZDim; k++)
+                zNew[k] = k * pxSizeAfter;
+
+
+            int[] superResArr = new int[newXDim * newYDim * newZDim];
+
+            for (int i = 0; i < newXDim; i++)
+            {
+                for (int j = 0; j < newYDim; j++)
+                {
+                    for (int k = 0; k < newZDim; k++)
+                    {
+
+                    }
+                }
+            }
+
+            // upsampledArray now contains the 3D array at the new resolution (1x1x1)
             return superResArr;
         }
+
+        // Trilinear interpolation function
+        static double TrilinearInterpolation(double x, double y, double z)
+        {
+            return x * y * z;
+        }
+
+        // Flatten a 3D array into a 1D array
+        static double[] Flatten(double[,,] array)
+        {
+            int length = array.GetLength(0) * array.GetLength(1) * array.GetLength(2);
+            double[] flattenedArray = new double[length];
+            int index = 0;
+
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    for (int k = 0; k < array.GetLength(2); k++)
+                    {
+                        flattenedArray[index++] = array[i, j, k];
+                    }
+                }
+            }
+
+            return flattenedArray;
+        }
+
         private DICOMSliceFile ReadDICOMFile(string filePath)
         {
             AcrNemaFile file = LoadFile(filePath);
