@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Tilia.Interactions.Interactables.Interactables;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace UnityVolumeRendering
@@ -171,7 +172,7 @@ namespace UnityVolumeRendering
         {
             GUILayout.BeginVertical();
 
-            
+            NetworkManager manager = GameObject.FindObjectOfType<NetworkManager>();
             // Show dataset import buttons
             /*if(GUILayout.Button("Import RAW dataset"))
             {
@@ -186,6 +187,16 @@ namespace UnityVolumeRendering
             if (GUILayout.Button("Import DICOM dataset"))
             {
                 RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDICOMDatasetResultVR);
+            }
+
+            if (GUILayout.Button("Create host"))
+            {
+                NetworkManager.Singleton.StartHost();
+            }
+
+            if (GUILayout.Button("Join as a client"))
+            {
+                NetworkManager.Singleton.StartClient();
             }
 
 
