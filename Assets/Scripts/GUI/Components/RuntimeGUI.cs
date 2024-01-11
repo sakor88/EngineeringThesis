@@ -5,6 +5,10 @@ using System.Linq;
 using Tilia.Interactions.Interactables.Interactables;
 using Unity.Netcode;
 using UnityEngine;
+using Unity.Netcode.Transports.UTP;
+using TMPro;
+using System.Net;
+using System.Net.Sockets;
 
 namespace UnityVolumeRendering
 {
@@ -21,6 +25,11 @@ namespace UnityVolumeRendering
         [SerializeField]
         private const string assetSuffix = ".prefab";
         private List<string> CTFilePaths;
+
+        [SerializeField] TextMeshProUGUI ipAddressText;
+
+        [SerializeField] string ipAddress;
+        [SerializeField] UnityTransport transport;
 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
@@ -165,24 +174,40 @@ namespace UnityVolumeRendering
             }
         }
 
+        /* Gets the Ip Address of your connected network and
+	    shows on the screen in order to let other players join
+	    by inputing that Ip in the input field */
+        // ONLY FOR HOST SIDE 
+        public string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipAddress = ip.ToString();
+                    return ip.ToString();
+                }
+            }
+            throw new System.Exception("No network adapters with an IPv4 address in the system!");
+        }
 
-    
+        /* Sets the Ip Address of the Connection Data in Unity Transport
+        to the Ip Address which was input in the Input Field */
+        // ONLY FOR CLIENT SIDE
+        public void SetIpAddress()
+        {
+            transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+            transport.ConnectionData.Address = ipAddress;
+        }
+
+
 
         private void OnGUI()
         {
             GUILayout.BeginVertical();
 
             NetworkManager manager = GameObject.FindObjectOfType<NetworkManager>();
-            // Show dataset import buttons
-            /*if(GUILayout.Button("Import RAW dataset"))
-            {
-                RuntimeFileBrowser.ShowOpenFileDialog(OnOpenRAWDatasetResult, "DataFiles");
-            }*/
-
-            /*if(GUILayout.Button("Import PARCHG dataset"))
-            {
-                RuntimeFileBrowser.ShowOpenFileDialog(OnOpenPARDatasetResult, "DataFiles");
-            }*/
 
             if (GUILayout.Button("Import DICOM dataset"))
             {
@@ -192,10 +217,13 @@ namespace UnityVolumeRendering
             if (GUILayout.Button("Create host"))
             {
                 NetworkManager.Singleton.StartHost();
+                Debug.Log(GetLocalIPAddress());
             }
 
             if (GUILayout.Button("Join as a client"))
             {
+
+                SetIpAddress();
                 NetworkManager.Singleton.StartClient();
             }
 
