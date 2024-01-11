@@ -222,7 +222,6 @@ namespace UnityVolumeRendering
 
             if (GUILayout.Button("Join as a client"))
             {
-
                 SetIpAddress();
                 NetworkManager.Singleton.StartClient();
             }
