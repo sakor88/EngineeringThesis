@@ -174,10 +174,6 @@ namespace UnityVolumeRendering
             }
         }
 
-        /* Gets the Ip Address of your connected network and
-	    shows on the screen in order to let other players join
-	    by inputing that Ip in the input field */
-        // ONLY FOR HOST SIDE 
         public string GetLocalIPAddress()
         {
             var host = Dns.GetHostEntry(Dns.GetHostName());
@@ -192,9 +188,7 @@ namespace UnityVolumeRendering
             throw new System.Exception("No network adapters with an IPv4 address in the system!");
         }
 
-        /* Sets the Ip Address of the Connection Data in Unity Transport
-        to the Ip Address which was input in the Input Field */
-        // ONLY FOR CLIENT SIDE
+
         public void SetIpAddress()
         {
             transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
@@ -225,6 +219,15 @@ namespace UnityVolumeRendering
                 SetIpAddress();
                 NetworkManager.Singleton.StartClient();
             }
+
+            ipAddress = GUILayout.TextField(ipAddress);
+
+            if (GUILayout.Button("Set IP address"))
+            {
+                SetIpAddress();
+                NetworkManager.Singleton.StartClient();
+            }
+
 
 
             if (GameObject.FindObjectOfType<VolumeRenderedObject>() != null && GUILayout.Button("Import Dose file"))
