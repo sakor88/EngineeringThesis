@@ -183,6 +183,8 @@ namespace UnityVolumeRendering
             DataElement imagePosCT = CTfiles[0].file.DataSet[ImagePositionPatient];
 
             int[] startingPixel = new int[2];
+
+            //Pixel index for the first pixel in the CT image from negative values
             startingPixel[0] = Convert.ToInt32(imagePosCT.Value[0]);
             startingPixel[1] = Convert.ToInt32(imagePosCT.Value[1]);
 
@@ -202,12 +204,9 @@ namespace UnityVolumeRendering
             int rowOffset = doseStartRow - startingPixel[0];
             int colOffset = doseStartCol - startingPixel[1];
 
-            //Debug.Log("doseStartRow: " + doseStartRow + " doseEndRow:" + doseEndRow);
-            //Debug.Log("doseStartCol: " + doseStartCol + " doseEndCol:" + doseEndCol);
-
             PixelData dosePixelData = doseFile.PixelData;
             int[] dosePixelArr = ToPixelArray(dosePixelData);
-            int[] superResPixelArr = superRes(dosePixelArr, doseDimX, doseDimY, doseDimZ,  pixelSpacingf, 1.0f);
+            int[,,] superResPixelArr = superRes(dosePixelArr, doseDimX, doseDimY, doseDimZ,  pixelSpacingf, 1.0f);
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
             {
@@ -220,34 +219,45 @@ namespace UnityVolumeRendering
 
                 DataElement imageZPosEle = slice.file.DataSet[ImagePosition];
                 float imageZPos = (float)Convert.ToDouble(imageZPosEle.Value[2]);
-                //Debug.Log("Z position: " + imageZPos);
 
                 if ((imageZPos <= doseZEndPos && imageZPos >= doseZStartPos) || (imageZPos >= doseZEndPos && imageZPos <= doseZStartPos))
                 {
                     int doseZIndex = (int)Math.Round((imageZPos - doseZStartPos) / sliceThickness);
-                    //Debug.Log("Dose Z index: " + doseZIndex);
 
                     for (int iRow = 0; iRow < CTpixelData.Rows; iRow++)
                     {
                         for (int iCol = 0; iCol < CTpixelData.Columns; iCol++)
                         {
-                            int pixelIndex = (iRow * CTpixelData.Columns) + iCol;
+                            int pixelIndex2D = (iRow * CTpixelData.Columns) + iCol;
                             int dataIndex = (iSlice * CTpixelData.Columns * CTpixelData.Rows) + (iRow * CTpixelData.Columns) + iCol;
 
                             int realRow = startingPixel[0] + iRow;
                             int realCol = startingPixel[1] + iCol;
-                            int dosePixelIndex = /*iSlice * doseDimX * doseDimY + */ pixelIndex - iRow * rowOffset - colOffset;
+                            int doseIndexX, doseIndexY, doseIndexZ;
+                            doseIndexZ = iSlice;
+
 
                             if (realRow > doseStartRow && realRow < doseEndRow && realCol > doseStartCol && realCol < doseEndCol)
                             {
-                                int pixelValue = dosePixelArr[dosePixelIndex];
+                                Debug.Log("realRow:" + realRow + ", realCol: " + realCol + "pixelIndex2D:" + pixelIndex2D);
+                                if (iRow == 0)
+                                {
+                                    doseIndexX = pixelIndex2D - colOffset;
+                                    doseIndexY = 0;
+                                }
+                                else
+                                {
+                                    doseIndexX = pixelIndex2D % iRow - colOffset;
+                                    doseIndexY = pixelIndex2D / iRow - rowOffset;
+                                }
+                                Debug.Log("Z:" + doseIndexZ + "Y:" + doseIndexY + "X:" + doseIndexX);
+                                int pixelValue = superResPixelArr[doseIndexZ, doseIndexY, doseIndexX];
                                 float grayValue = pixelValue * 6.3e-5f;
                                 dataset.data[dataIndex] = pixelValue;
-
                             }
                             else
                             {
-                                int pixelValue = CTpixelArr[pixelIndex];
+                                int pixelValue = CTpixelArr[pixelIndex2D];
                                 float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
                                 dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
                             }
@@ -324,87 +334,66 @@ namespace UnityVolumeRendering
 
 
 
-        int[] superRes(int[] originalArr, int rows, int cols, int slices, float pxSizeBefore, float pxSizeAfter)
+        int[,,] superRes(int[] originalArr, int rows, int cols, int slices, float pxSizeBefore, float pxSizeAfter)
         {
 
-            //float pxMultiplier = pxSizeBefore / pxSizeAfter;
-            //int[] superResArr = new int[(int)Math.Floor(rows * cols * Math.Pow(pxMultiplier, 2))];
-            // Calculate the scaling factor for each dimension
             double scaleFactor = pxSizeBefore / pxSizeAfter;
 
-            int newXDim = (int)Math.Ceiling(rows / scaleFactor);
-            int newYDim = (int)Math.Ceiling(cols / scaleFactor);
-            int newZDim = (int)Math.Ceiling(slices / scaleFactor);
+            int newYDim = rows * 3;
+            int newXDim = cols * 3;
+            int newZDim = slices;
 
-            double[] xOriginal = new double[rows];
-            double[] yOriginal = new double[cols];
-            double[] zOriginal = new double[slices];
+            int[,,] superResArr = new int[newZDim, newYDim, newXDim];
 
-            double[] xNew = new double[newXDim];
-            double[] yNew = new double[newYDim];
-            double[] zNew = new double[newZDim];
-
-            for (int i = 0; i < rows; i++)
-                xOriginal[i] = i * pxSizeBefore;
-
-            for (int j = 0; j < cols; j++)
-                yOriginal[j] = j * pxSizeBefore;
-
-            for (int k = 0; k < slices; k++)
-                zOriginal[k] = k * pxSizeBefore;
-
-            for (int i = 0; i < newXDim; i++)
-                xNew[i] = i * pxSizeAfter;
-
-            for (int j = 0; j < newYDim; j++)
-                yNew[j] = j * pxSizeAfter;
-
-            for (int k = 0; k < newZDim; k++)
-                zNew[k] = k * pxSizeAfter;
+            Debug.Log("scaleFactor: " + scaleFactor + ",y dim: " + newYDim + ",x dim: " + newXDim + "");
 
 
-            int[] superResArr = new int[newXDim * newYDim * newZDim];
-
-            for (int i = 0; i < newXDim; i++)
+            for (int z = 0; z < newZDim; z++)
             {
-                for (int j = 0; j < newYDim; j++)
+                for (int y = 0, y_old = 0; y_old < rows; y += 3, y_old++)
                 {
-                    for (int k = 0; k < newZDim; k++)
+                    for (int x = 0, x_old = 0; x_old < cols; x+= 3, x_old++)
                     {
+                        int internalValue = originalArr[z * cols * rows + y_old * cols + x_old];
+                        superResArr[z, y, x] = internalValue;
+                        superResArr[z, y, x+1] = internalValue;
+                        superResArr[z, y+1, x] = internalValue;
+                        superResArr[z, y+1, x+1] = internalValue;
+
+                        if(x_old < cols - 1 && y_old < rows - 1)
+                        {
+                            //to the right of the original 2x2 pixel
+                            superResArr[z, y, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1]) / 2;
+                            superResArr[z, y + 1, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1]) / 2;
+
+                            //under the original 2x2 pixel
+                            superResArr[z, y + 2, x] = originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old];
+                            superResArr[z, y + 2, x + 1] = originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old];
+
+                            //in the bottom right corner of the original 2x2 pixel
+                            superResArr[z, y + 2, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1] +
+                                originalArr[z * cols * rows + (y_old + 1) * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old + 1]) / 4;
+                        }
+                        else
+                        {
+                            //to the right of the original 2x2 pixel
+                            superResArr[z, y, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                            superResArr[z, y + 1, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+
+                            //under the original 2x2 pixel
+                            superResArr[z, y + 2, x] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                            superResArr[z, y + 2, x + 1] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+
+                            //in the bottom right corner of the original 2x2 pixel
+                            superResArr[z, y + 2, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                        }
+
 
                     }
                 }
             }
 
-            // upsampledArray now contains the 3D array at the new resolution (1x1x1)
             return superResArr;
-        }
-
-        // Trilinear interpolation function
-        static double TrilinearInterpolation(double x, double y, double z)
-        {
-            return x * y * z;
-        }
-
-        // Flatten a 3D array into a 1D array
-        static double[] Flatten(double[,,] array)
-        {
-            int length = array.GetLength(0) * array.GetLength(1) * array.GetLength(2);
-            double[] flattenedArray = new double[length];
-            int index = 0;
-
-            for (int i = 0; i < array.GetLength(0); i++)
-            {
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    for (int k = 0; k < array.GetLength(2); k++)
-                    {
-                        flattenedArray[index++] = array[i, j, k];
-                    }
-                }
-            }
-
-            return flattenedArray;
         }
 
         private DICOMSliceFile ReadDICOMFile(string filePath)

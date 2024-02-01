@@ -203,16 +203,13 @@ namespace UnityVolumeRendering
 
             NetworkManager manager = GameObject.FindObjectOfType<NetworkManager>();
 
-            if (GUILayout.Button("Import DICOM dataset"))
-            {
-                RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDICOMDatasetResultVR);
-            }
-
             if (GUILayout.Button("Create host"))
             {
                 NetworkManager.Singleton.StartHost();
                 Debug.Log(GetLocalIPAddress());
             }
+
+            ipAddress = GUILayout.TextField(ipAddress);
 
             if (GUILayout.Button("Join as a client"))
             {
@@ -220,15 +217,10 @@ namespace UnityVolumeRendering
                 NetworkManager.Singleton.StartClient();
             }
 
-            ipAddress = GUILayout.TextField(ipAddress);
-
-            if (GUILayout.Button("Set IP address"))
+            if (GUILayout.Button("Import DICOM dataset"))
             {
-                SetIpAddress();
-                NetworkManager.Singleton.StartClient();
+                RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDICOMDatasetResultVR);
             }
-
-
 
             if (GameObject.FindObjectOfType<VolumeRenderedObject>() != null && GUILayout.Button("Import Dose file"))
             {
