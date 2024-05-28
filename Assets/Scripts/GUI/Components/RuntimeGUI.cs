@@ -9,6 +9,7 @@ using Unity.Netcode.Transports.UTP;
 using TMPro;
 using System.Net;
 using System.Net.Sockets;
+using Unity.Netcode.Components;
 
 namespace UnityVolumeRendering
 {
@@ -72,6 +73,8 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                    helper.AddComponent<NetworkObject>();
+                    child.AddComponent<NetworkTransform>();
 
                 }
 
@@ -142,7 +145,7 @@ namespace UnityVolumeRendering
         public void CreateInteractable(GameObject objectToWrap)
         {
             int siblingIndex = objectToWrap.transform.GetSiblingIndex();
-            GameObject newInteractable = Instantiate(interactablePrefab);   
+            GameObject newInteractable = Instantiate(interactablePrefab);
             newInteractable.name += "_" + objectToWrap.name;
             InteractableFacade facade = newInteractable.GetComponent<InteractableFacade>();
 
@@ -252,14 +255,14 @@ namespace UnityVolumeRendering
                 VolumeDataset dataset = parimporter.Import(filePath);
                 if (dataset != null)
                 {
-                        VolumeObjectFactory.CreateObject(dataset);
+                    VolumeObjectFactory.CreateObject(dataset);
                 }
             }
         }
-        
+
         private void OnOpenRAWDatasetResult(RuntimeFileBrowser.DialogResult result)
         {
-            if(!result.cancelled)
+            if (!result.cancelled)
             {
 
                 // We'll only allow one dataset at a time in the runtime GUI (for simplicity)
@@ -272,7 +275,7 @@ namespace UnityVolumeRendering
 
                 // Parse .ini file
                 DatasetIniData initData = DatasetIniReader.ParseIniFile(filePath + ".ini");
-                if(initData != null)
+                if (initData != null)
                 {
                     // Import the dataset
                     RawDatasetImporter importer = new RawDatasetImporter(filePath, initData.dimX, initData.dimY, initData.dimZ, initData.format, initData.endianness, initData.bytesToSkip);
@@ -320,7 +323,7 @@ namespace UnityVolumeRendering
         private void DespawnAllDatasets()
         {
             VolumeRenderedObject[] volobjs = GameObject.FindObjectsOfType<VolumeRenderedObject>();
-            foreach(VolumeRenderedObject volobj in volobjs)
+            foreach (VolumeRenderedObject volobj in volobjs)
             {
                 GameObject.Destroy(volobj.gameObject);
             }
