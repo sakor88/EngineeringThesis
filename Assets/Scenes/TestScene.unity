@@ -1785,6 +1785,8 @@ MonoBehaviour:
   ipAddressText: {fileID: 0}
   ipAddress: 
   transport: {fileID: 0}
+  helperPrefab: {fileID: 8816065556341887495, guid: fa00cd1ed290bc84c967716c5c71c619,
+    type: 3}
 --- !u!4 &243275540
 Transform:
   m_ObjectHideFlags: 0
