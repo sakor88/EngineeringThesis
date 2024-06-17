@@ -83,24 +83,28 @@ namespace UnityVolumeRendering
                     child.AddComponent<NetworkObject>();
                     obj.gameObject.AddComponent<NetworkObject>();
 
+                    GameObject test = new GameObject("test");
+                    test.AddComponent<NetworkObject>();
+                    test.GetComponent<NetworkObject>().Spawn(true);
 
-                    NetworkObject networkObjectHelper = helper.GetComponent<NetworkObject>();
-                    if (networkObjectHelper != null && networkObjectHelper.NetworkManager.IsServer)
-                    {
-                        networkObjectHelper.Spawn(true);
-                    }
 
-                    NetworkObject networkObjectChild = child.GetComponent<NetworkObject>();
-                    if (networkObjectChild != null && networkObjectChild.NetworkManager.IsServer)
-                    {
-                        networkObjectChild.Spawn(true);
-                    }
+                    //NetworkObject networkObjectHelper = helper.GetComponent<NetworkObject>();
+                    //if (networkObjectHelper != null && networkObjectHelper.NetworkManager.IsServer)
+                    //{
+                    //    networkObjectHelper.Spawn(true);
+                    //}
 
-                    NetworkObject networkObjectObj = obj.gameObject.GetComponent<NetworkObject>();
-                    if (networkObjectObj != null && networkObjectObj.NetworkManager.IsServer)
-                    {
-                        networkObjectObj.Spawn(true);
-                    }
+                    //NetworkObject networkObjectChild = child.GetComponent<NetworkObject>();
+                    //if (networkObjectChild != null && networkObjectChild.NetworkManager.IsServer)
+                    //{
+                    //    networkObjectChild.Spawn(true);
+                    //}
+
+                    //NetworkObject networkObjectObj = obj.gameObject.GetComponent<NetworkObject>();
+                    //if (networkObjectObj != null && networkObjectObj.NetworkManager.IsServer)
+                    //{
+                    //    networkObjectObj.Spawn(true);
+                    //}
 
                     //// Ensure the interactable object has NetworkTransform
                     //GameObject interactable = child.transform.parent.transform.parent.gameObject;
