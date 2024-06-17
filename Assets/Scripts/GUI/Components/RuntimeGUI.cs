@@ -10,6 +10,7 @@ using TMPro;
 using System.Net;
 using System.Net.Sockets;
 using Unity.Netcode.Components;
+using UnityEditor;
 
 namespace UnityVolumeRendering
 {
@@ -33,6 +34,41 @@ namespace UnityVolumeRendering
         [SerializeField] UnityTransport transport;
 
         [SerializeField] private GameObject helperPrefab;
+        NetworkVariable<VolumeDataset> dataset;
+
+        [ClientRpc]
+        public void SyncObjectToClientsClientRPC()
+        {
+            // Instantiate obj and adjust its position and rotation
+            VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset.Value); // Pass dataset when supported
+            obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
+            var child = obj.gameObject.transform.GetChild(0).gameObject;
+
+            GameObject helper = GameObject.Find("DicomCTVolumeRenderedObject");
+
+            obj.transform.SetParent(helper.transform);
+            child.transform.SetParent(helper.transform);
+
+            // Add collider and prepare interactable
+            child.AddComponent<BoxCollider>();
+            prepareInteractablePrefab();
+            ConvertSelectedGameObject(child.gameObject);
+
+            // Create slicing plane
+            obj.CreateSlicingPlane();
+            SlicingPlane plane = FindObjectsOfType<SlicingPlane>()[0];
+            GameObject planeObj = plane.gameObject;
+            obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
+            obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
+            plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+
+            // Ensure the interactable object has NetworkTransform
+            GameObject interactable = child.transform.parent.transform.parent.gameObject;
+            interactable.AddComponent<NetworkTransform>();
+
+        }
+
+
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
             if (!result.cancelled)
@@ -54,8 +90,8 @@ namespace UnityVolumeRendering
                 foreach (IImageSequenceSeries series in seriesList)
                 {
                     // Import single DICOM series
-                    VolumeDataset dataset = importer.ImportSeries(series);
-                    VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
+                    dataset = new NetworkVariable<VolumeDataset>(importer.ImportSeries(series));
+                    VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset.Value);
                     obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
 
@@ -87,6 +123,8 @@ namespace UnityVolumeRendering
                     // Ensure the interactable object has NetworkTransform
                     GameObject interactable = child.transform.parent.transform.parent.gameObject;
                     interactable.AddComponent<NetworkTransform>();
+
+                    SyncObjectToClientsClientRPC();
                 }
             }
         }
