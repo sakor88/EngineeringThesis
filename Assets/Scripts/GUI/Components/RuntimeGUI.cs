@@ -32,8 +32,10 @@ namespace UnityVolumeRendering
         [SerializeField] string ipAddress;
         [SerializeField] UnityTransport transport;
 
+        [SerializeField] private GameObject helperPrefab; 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
+
             if (!result.cancelled)
             {
                 DespawnAllDatasetsVR();
@@ -59,7 +61,7 @@ namespace UnityVolumeRendering
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
 
 
-                    GameObject helper = new GameObject("DicomCTVolumeRenderedObject");
+                    GameObject helper = Instantiate(helperPrefab);
                     obj.transform.SetParent(helper.transform);
                     child.transform.SetParent(helper.transform);
 
@@ -73,8 +75,16 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-                    helper.AddComponent<NetworkObject>();
-                    child.AddComponent<NetworkTransform>();
+
+                    var instanceNetworkObject = helper.GetComponent<NetworkObject>();
+                    if (!instanceNetworkObject.IsOwner)
+                    {
+                        return;
+                    }
+                    instanceNetworkObject.Spawn(true);
+
+                    GameObject interactable = child.transform.parent.transform.parent.gameObject;
+                    interactable.AddComponent<NetworkTransform>();
 
                 }
 
