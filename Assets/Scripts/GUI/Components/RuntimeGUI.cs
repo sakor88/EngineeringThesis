@@ -34,39 +34,6 @@ namespace UnityVolumeRendering
         [SerializeField] UnityTransport transport;
 
         [SerializeField] private GameObject helperPrefab;
-        NetworkVariable<VolumeDataset> dataset;
-
-        [ClientRpc]
-        public void SyncObjectToClientsClientRPC()
-        {
-            // Instantiate obj and adjust its position and rotation
-            VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset.Value); // Pass dataset when supported
-            obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
-            var child = obj.gameObject.transform.GetChild(0).gameObject;
-
-            GameObject helper = GameObject.Find("DicomCTVolumeRenderedObject");
-
-            obj.transform.SetParent(helper.transform);
-            child.transform.SetParent(helper.transform);
-
-            // Add collider and prepare interactable
-            child.AddComponent<BoxCollider>();
-            prepareInteractablePrefab();
-            ConvertSelectedGameObject(child.gameObject);
-
-            // Create slicing plane
-            obj.CreateSlicingPlane();
-            SlicingPlane plane = FindObjectsOfType<SlicingPlane>()[0];
-            GameObject planeObj = plane.gameObject;
-            obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
-            obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
-            plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-
-            // Ensure the interactable object has NetworkTransform
-            GameObject interactable = child.transform.parent.transform.parent.gameObject;
-            interactable.AddComponent<NetworkTransform>();
-
-        }
 
 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
@@ -90,8 +57,8 @@ namespace UnityVolumeRendering
                 foreach (IImageSequenceSeries series in seriesList)
                 {
                     // Import single DICOM series
-                    dataset = new NetworkVariable<VolumeDataset>(importer.ImportSeries(series));
-                    VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset.Value);
+                    VolumeDataset dataset = importer.ImportSeries(series);
+                    VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
                     obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
 
@@ -113,18 +80,31 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
 
-                    // Spawn the helper object on the network
-                    NetworkObject networkObject = helper.GetComponent<NetworkObject>();
-                    if (networkObject != null && networkObject.NetworkManager.IsServer)
+                    child.AddComponent<NetworkObject>();
+                    obj.gameObject.AddComponent<NetworkObject>();
+
+
+                    NetworkObject networkObjectHelper = helper.GetComponent<NetworkObject>();
+                    if (networkObjectHelper != null && networkObjectHelper.NetworkManager.IsServer)
                     {
-                        networkObject.Spawn(true);
+                        networkObjectHelper.Spawn(true);
                     }
 
-                    // Ensure the interactable object has NetworkTransform
-                    GameObject interactable = child.transform.parent.transform.parent.gameObject;
-                    interactable.AddComponent<NetworkTransform>();
+                    NetworkObject networkObjectChild = child.GetComponent<NetworkObject>();
+                    if (networkObjectChild != null && networkObjectChild.NetworkManager.IsServer)
+                    {
+                        networkObjectChild.Spawn(true);
+                    }
 
-                    SyncObjectToClientsClientRPC();
+                    NetworkObject networkObjectObj = obj.gameObject.GetComponent<NetworkObject>();
+                    if (networkObjectObj != null && networkObjectObj.NetworkManager.IsServer)
+                    {
+                        networkObjectObj.Spawn(true);
+                    }
+
+                    //// Ensure the interactable object has NetworkTransform
+                    //GameObject interactable = child.transform.parent.transform.parent.gameObject;
+                    //interactable.AddComponent<NetworkTransform>();
                 }
             }
         }
