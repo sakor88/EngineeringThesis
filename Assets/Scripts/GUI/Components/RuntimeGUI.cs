@@ -18,7 +18,7 @@ namespace UnityVolumeRendering
     /// You can import datasets, and edit them.
     /// Add this component to an empty GameObject in your scene (it's already in the test scene) and click play to see the GUI.
     /// </summary>
-    public class RuntimeGUI : MonoBehaviour
+    public class RuntimeGUI : NetworkBehaviour
     {
         private GameObject interactablePrefab;
         [SerializeField]
@@ -32,10 +32,9 @@ namespace UnityVolumeRendering
         [SerializeField] string ipAddress;
         [SerializeField] UnityTransport transport;
 
-        [SerializeField] private GameObject helperPrefab; 
+        [SerializeField] private GameObject helperPrefab;
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
-
             if (!result.cancelled)
             {
                 DespawnAllDatasetsVR();
@@ -54,21 +53,23 @@ namespace UnityVolumeRendering
                 // There will usually just be one series
                 foreach (IImageSequenceSeries series in seriesList)
                 {
-                    // Import single DICOm series
+                    // Import single DICOM series
                     VolumeDataset dataset = importer.ImportSeries(series);
                     VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
                     obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
 
-
+                    // Instantiate helper prefab
                     GameObject helper = Instantiate(helperPrefab);
                     obj.transform.SetParent(helper.transform);
                     child.transform.SetParent(helper.transform);
 
+                    // Add collider and prepare interactable
                     child.AddComponent<BoxCollider>();
                     prepareInteractablePrefab();
                     ConvertSelectedGameObject(child.gameObject);
 
+                    // Create slicing plane
                     obj.CreateSlicingPlane();
                     SlicingPlane plane = FindObjectsOfType<SlicingPlane>()[0];
                     GameObject planeObj = plane.gameObject;
@@ -76,20 +77,18 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
 
-                    var instanceNetworkObject = helper.GetComponent<NetworkObject>();
-                    if (!instanceNetworkObject.IsOwner)
+                    // Spawn the helper object on the network
+                    NetworkObject networkObject = helper.GetComponent<NetworkObject>();
+                    if (networkObject != null && networkObject.NetworkManager.IsServer)
                     {
-                        return;
+                        networkObject.Spawn(true);
                     }
-                    instanceNetworkObject.Spawn(true);
 
+                    // Ensure the interactable object has NetworkTransform
                     GameObject interactable = child.transform.parent.transform.parent.gameObject;
                     interactable.AddComponent<NetworkTransform>();
-
                 }
-
             }
-
         }
 
         public void OnOpenDoseResultVR(RuntimeFileBrowser.DialogResult result)
