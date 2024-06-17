@@ -35,7 +35,6 @@ namespace UnityVolumeRendering
 
         [SerializeField] private GameObject helperPrefab;
 
-
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
             if (!result.cancelled)
@@ -63,7 +62,7 @@ namespace UnityVolumeRendering
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
 
                     // Instantiate helper prefab
-                    GameObject helper = Instantiate(helperPrefab);
+                    GameObject helper = new GameObject("DicomCTVolumeRenderedObject");
                     obj.transform.SetParent(helper.transform);
                     child.transform.SetParent(helper.transform);
 
@@ -80,12 +79,12 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
 
-                    child.AddComponent<NetworkObject>();
-                    obj.gameObject.AddComponent<NetworkObject>();
-
                     GameObject test = new GameObject("test");
                     test.AddComponent<NetworkObject>();
                     test.GetComponent<NetworkObject>().Spawn(true);
+
+                    //child.AddComponent<NetworkObject>();
+                    //obj.gameObject.AddComponent<NetworkObject>();
 
 
                     //NetworkObject networkObjectHelper = helper.GetComponent<NetworkObject>();
