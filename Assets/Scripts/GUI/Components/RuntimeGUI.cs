@@ -34,6 +34,7 @@ namespace UnityVolumeRendering
         [SerializeField] UnityTransport transport;
 
         [SerializeField] private GameObject helperPrefab;
+        [SerializeField] private GameObject testPrefab;
 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
@@ -79,9 +80,9 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
 
-                    GameObject test = new GameObject("test");
-                    test.AddComponent<NetworkObject>();
+                    GameObject test = Instantiate(testPrefab);
                     test.GetComponent<NetworkObject>().Spawn(true);
+                    test.AddComponent<BoxCollider>().enabled = true;
 
                     //child.AddComponent<NetworkObject>();
                     //obj.gameObject.AddComponent<NetworkObject>();
