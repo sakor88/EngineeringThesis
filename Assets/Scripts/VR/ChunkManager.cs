@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 
 public class ChunkManager : NetworkBehaviour
 {
@@ -56,6 +57,9 @@ public class ChunkManager : NetworkBehaviour
     public void SendDatasetInChunks(float[] data)
     {
         int chunkSize = Mathf.CeilToInt((float)data.Length / expectedChunks);
+
+        GameObject networkManager = GameObject.Find("NetworkManager");
+        networkManager.GetComponent<UnityTransport>().MaxSendQueueSize = 24000000;
 
         for (int i = 0; i < expectedChunks; i++)
         {
