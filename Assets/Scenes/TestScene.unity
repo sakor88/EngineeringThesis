@@ -9528,8 +9528,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1406937186}
-  - component: {fileID: 1406937185}
   - component: {fileID: 1406937184}
+  - component: {fileID: 1406937185}
   m_Layer: 0
   m_Name: ChunkManager
   m_TagString: Untagged
