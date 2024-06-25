@@ -16,6 +16,7 @@ public class ChunkManager : NetworkBehaviour
     [Rpc(SendTo.NotServer)]
     void SendChunkRpc(float[] chunk, bool isLastChunk, int index)
     {
+        Debug.LogWarning("Received chunk " + index + " of size " + chunk.Length);
         // Ensure the list is big enough
         if (receivedChunks.Count <= index)
         {
@@ -31,8 +32,6 @@ public class ChunkManager : NetworkBehaviour
             isReassembling = true;
             ReassembleChunks();
         }
-
-        Debug.Log("Received chunk " + index + " of size " + chunk.Length);
     }
 
     private void ReassembleChunks()
@@ -58,7 +57,7 @@ public class ChunkManager : NetworkBehaviour
     {
         int chunkSize = Mathf.CeilToInt((float)data.Length / expectedChunks);
 
-        for (int i = 0; i < expectedChunks; i++)
+        for (int i = 0; i < 1; i++)
         {
             Debug.Log("Sending chunk " + i);
             int offset = i * chunkSize;
