@@ -5,7 +5,7 @@ using Unity.Netcode;
 public class ChunkManager : NetworkBehaviour
 {
     private List<float[]> receivedChunks;
-    private int expectedChunks = 3000; // Total number of expected chunks
+    private int expectedChunks = 5000; // Total number of expected chunks
     private bool isReassembling = false;
 
     void Awake()
@@ -57,7 +57,7 @@ public class ChunkManager : NetworkBehaviour
     {
         int chunkSize = Mathf.CeilToInt((float)data.Length / expectedChunks);
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < expectedChunks; i++)
         {
             Debug.Log("Sending chunk " + i);
             int offset = i * chunkSize;
