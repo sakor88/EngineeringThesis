@@ -51,7 +51,6 @@ public class ChunkManager : NetworkBehaviour
             offset += chunk.Length;
         }
 
-        // Now reassembledData contains the full dataset
         Debug.Log("Reassembled data length: " + reassembledData.Length);
     }
 
@@ -61,6 +60,7 @@ public class ChunkManager : NetworkBehaviour
 
         for (int i = 0; i < expectedChunks; i++)
         {
+            Debug.Log("Sending chunk " + i);
             int offset = i * chunkSize;
             int size = Mathf.Min(chunkSize, data.Length - offset);
             float[] chunk = new float[size];
