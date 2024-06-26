@@ -12,6 +12,9 @@ public class ChunkManager : NetworkBehaviour
     void Awake()
     {
         receivedChunks = new List<float[]>(expectedChunks);
+        GameObject networkManager = GameObject.Find("NetworkManager");
+        networkManager.GetComponent<UnityTransport>().MaxSendQueueSize = 384000000;
+        Debug.Log("MaxSendQueueSize: " + networkManager.GetComponent<UnityTransport>().MaxSendQueueSize);
     }
 
     [Rpc(SendTo.NotServer)]
@@ -57,9 +60,6 @@ public class ChunkManager : NetworkBehaviour
     public void SendDatasetInChunks(float[] data)
     {
         int chunkSize = Mathf.CeilToInt((float)data.Length / expectedChunks);
-
-        GameObject networkManager = GameObject.Find("NetworkManager");
-        networkManager.GetComponent<UnityTransport>().MaxSendQueueSize = 24000000;
 
         for (int i = 0; i < expectedChunks; i++)
         {
