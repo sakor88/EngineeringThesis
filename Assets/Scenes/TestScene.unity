@@ -1788,8 +1788,6 @@ MonoBehaviour:
   transport: {fileID: 0}
   helperPrefab: {fileID: 8816065556341887495, guid: fa00cd1ed290bc84c967716c5c71c619,
     type: 3}
-  testPrefab: {fileID: 934119956108817344, guid: 2038d256a43a7e64ba8ef38b98e910e4,
-    type: 3}
 --- !u!4 &243275540
 Transform:
   m_ObjectHideFlags: 0
@@ -12319,6 +12317,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2003172101}
   - component: {fileID: 2003172102}
+  - component: {fileID: 2003172103}
   m_Layer: 0
   m_Name: SliderBehaviour
   m_TagString: Untagged
@@ -12353,6 +12352,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109483ce92278e643bc778d746dc13c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2003172103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003172100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1916822260
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &2015659744
 GameObject:
   m_ObjectHideFlags: 0

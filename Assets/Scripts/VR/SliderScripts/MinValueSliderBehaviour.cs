@@ -17,7 +17,7 @@ namespace UnityVolumeRendering
             UpdateMinValueRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void UpdateMinValueRpc(float percent)
         {
             VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];

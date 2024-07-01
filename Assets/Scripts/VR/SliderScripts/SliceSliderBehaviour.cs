@@ -17,7 +17,7 @@ namespace UnityVolumeRendering
             MoveSliceYRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void MoveSliceYRpc(float percent)
         {
             SlicingPlane slicingPlane = FindObjectsOfType<SlicingPlane>()[0];
@@ -36,7 +36,7 @@ namespace UnityVolumeRendering
             MoveSliceXRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void MoveSliceXRpc(float percent)
         {
             SlicingPlane slicingPlane = FindObjectsOfType<SlicingPlane>()[0];
@@ -55,7 +55,7 @@ namespace UnityVolumeRendering
             MoveSliceZRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void MoveSliceZRpc(float percent)
         {
             SlicingPlane slicingPlane = FindObjectsOfType<SlicingPlane>()[0];
@@ -74,7 +74,7 @@ namespace UnityVolumeRendering
             RotateSliceXRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void RotateSliceXRpc(float percent)
         {
             SlicingPlane slicingPlane = FindObjectsOfType<SlicingPlane>()[0];
@@ -93,7 +93,7 @@ namespace UnityVolumeRendering
             RotateSliceYRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void RotateSliceYRpc(float percent)
         {
             SlicingPlane slicingPlane = FindObjectsOfType<SlicingPlane>()[0];
@@ -112,7 +112,7 @@ namespace UnityVolumeRendering
             RotateSliceZRpc(percent);
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void RotateSliceZRpc(float percent)
         {
             SlicingPlane slicingPlane = FindObjectsOfType<SlicingPlane>()[0];
