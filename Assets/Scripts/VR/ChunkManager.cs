@@ -6,14 +6,14 @@ using Unity.Netcode.Transports.UTP;
 public class ChunkManager : NetworkBehaviour
 {
     private List<float[]> receivedChunks;
-    private int expectedChunks = 5000; // Total number of expected chunks
+    private int expectedChunks = 3000; // Total number of expected chunks
     private bool isReassembling = false;
 
     void Awake()
     {
         receivedChunks = new List<float[]>(expectedChunks);
         GameObject networkManager = GameObject.Find("NetworkManager");
-        networkManager.GetComponent<UnityTransport>().MaxSendQueueSize = 384000000;
+        //networkManager.GetComponent<UnityTransport>().MaxSendQueueSize = 384000000;
         Debug.Log("MaxSendQueueSize: " + networkManager.GetComponent<UnityTransport>().MaxSendQueueSize);
     }
 
@@ -21,21 +21,21 @@ public class ChunkManager : NetworkBehaviour
     void SendChunkRpc(float[] chunk, bool isLastChunk, int index)
     {
         Debug.LogWarning("Received chunk " + index + " of size " + chunk.Length);
-        // Ensure the list is big enough
-        if (receivedChunks.Count <= index)
-        {
-            receivedChunks.AddRange(new float[index - receivedChunks.Count + 1][]);
-        }
+        //// Ensure the list is big enough
+        //if (receivedChunks.Count <= index)
+        //{
+        //    receivedChunks.AddRange(new float[index - receivedChunks.Count + 1][]);
+        //}
 
-        // Store the chunk
-        receivedChunks[index] = chunk;
+        //// Store the chunk
+        //receivedChunks[index] = chunk;
 
-        // Check if all chunks are received
-        if (isLastChunk && !isReassembling)
-        {
-            isReassembling = true;
-            ReassembleChunks();
-        }
+        //// Check if all chunks are received
+        //if (isLastChunk && !isReassembling)
+        //{
+        //    isReassembling = true;
+        //    ReassembleChunks();
+        //}
     }
 
     private void ReassembleChunks()

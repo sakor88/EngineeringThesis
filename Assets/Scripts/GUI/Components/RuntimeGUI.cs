@@ -34,84 +34,7 @@ namespace UnityVolumeRendering
         [SerializeField] UnityTransport transport;
 
         [SerializeField] private GameObject helperPrefab;
-        [SerializeField] private GameObject testPrefab;
 
-
-        const int totalDatasetParts = 3000;
-
-        //public void SendDatasetInChunks(float[] data)
-        //{
-        //    int chunkSize = Mathf.CeilToInt((float)data.Length / totalDatasetParts);
-
-        //    for (int i = 0; i < totalDatasetParts; i++)
-        //    {
-        //        int offset = i * chunkSize;
-        //        int size = Mathf.Min(chunkSize, data.Length - offset);
-        //        float[] chunk = new float[size];
-        //        Array.Copy(data, offset, chunk, 0, size);
-
-        //        SendChunkRpc(chunk, i == totalDatasetParts - 1, i);
-        //    }
-        //}
-
-        //[Rpc(SendTo.NotServer)]
-        //void SendChunkRpc(float[] chunk, bool isLastChunk, int i)
-        //{
-
-        //    GameObject tempDataset;
-
-        //    if (i == 0)
-        //    {
-        //         tempDataset = new GameObject("TempDataset");
-        //    }
-
-        //    tempDataset.AddComponent<>();
-
-        //}
-
-
-        [Rpc(SendTo.NotServer)]
-        void SetupVolumeObjectRpc(float[] data, int dimX, int dimY, int dimZ, float scaleX, float scaleY, float scaleZ, string datasetName)
-        {
-            VolumeDataset dataset = new VolumeDataset();
-
-            dataset.data = data;
-            dataset.dimX = dimX;
-            dataset.dimY = dimY;
-            dataset.dimZ = dimZ;
-            dataset.scaleX = scaleX;
-            dataset.scaleY = scaleY;
-            dataset.scaleZ = scaleZ;
-            dataset.datasetName = datasetName;
-
-
-            VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
-            obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
-            var child = obj.gameObject.transform.GetChild(0).gameObject;
-
-            // Instantiate helper prefab
-            GameObject helper = new GameObject("DicomCTVolumeRenderedObject");
-
-            if (NetworkManager.Singleton.IsServer)
-            {
-                helper.GetComponent<NetworkObject>().Spawn(true);
-            }
-
-            // Add collider and prepare interactable
-            child.AddComponent<BoxCollider>();
-            prepareInteractablePrefab();
-            ConvertSelectedGameObject(child.gameObject);
-
-            // Create slicing plane
-            obj.CreateSlicingPlane();
-            SlicingPlane plane = FindObjectsOfType<SlicingPlane>()[0];
-            GameObject planeObj = plane.gameObject;
-            obj.transform.SetParent(helper.transform);
-            child.transform.SetParent(helper.transform);
-            obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
-            obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
-            plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-        }
 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
@@ -135,15 +58,29 @@ namespace UnityVolumeRendering
                 {
                     // Import single DICOM series
                     VolumeDataset dataset = importer.ImportSeries(series);
-                    
+                    VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
+                    obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
+                    var child = obj.gameObject.transform.GetChild(0).gameObject;
 
-                    ChunkManager chunkManager = GameObject.FindObjectOfType<ChunkManager>();
+                    // Instantiate helper prefab
+                    GameObject helper = new GameObject("DicomCTVolumeRenderedObject");
 
-                    if (chunkManager != null && dataset.data != null)
-                    {
-                        chunkManager.SendDatasetInChunks(dataset.data);
-                    }
-                
+                    // Add collider and prepare interactable
+                    child.AddComponent<BoxCollider>();
+                    prepareInteractablePrefab();
+                    ConvertSelectedGameObject(child.gameObject);
+
+                    // Create slicing plane
+                    obj.CreateSlicingPlane();
+                    SlicingPlane plane = FindObjectsOfType<SlicingPlane>()[0];
+                    GameObject planeObj = plane.gameObject;
+                    obj.transform.SetParent(helper.transform);
+                    child.transform.SetParent(helper.transform);
+                    obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
+                    obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
+                    plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+
+
                 }
             }
         }

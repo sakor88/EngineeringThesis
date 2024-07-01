@@ -1,19 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using UnityVolumeRendering;
+using Unity.Netcode;
 
-public class MinValueSliderBehaviour : MonoBehaviour
+namespace UnityVolumeRendering
 {
-    public void UpdateMinValue(float percent)
+    public class MinValueSliderBehaviour : NetworkBehaviour
     {
-        if (percent <= 0 || percent >= 100)
+        public void UpdateMinValue(float percent)
         {
-            return;
+            if (percent <= 0 || percent >= 100)
+            {
+                return;
+            }
+
+            UpdateMinValueRpc(percent);
         }
-        VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
-        float minValue = percent / 100;
-        volumeRenderedObject.SetVisibilityWindow(minValue, volumeRenderedObject.GetVisibilityWindow()[1]);
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void UpdateMinValueRpc(float percent)
+        {
+            VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
+            float minValue = percent / 100;
+            volumeRenderedObject.SetVisibilityWindow(minValue, volumeRenderedObject.GetVisibilityWindow()[1]);
+        }
     }
 }

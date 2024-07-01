@@ -1,19 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using UnityVolumeRendering;
+using Unity.Netcode;
 
-public class MaxValueSliderBehaviour : MonoBehaviour
+namespace UnityVolumeRendering
 {
-    public void UpdateMaxValue(float percent)
+    public class MaxValueSliderBehaviour : NetworkBehaviour
     {
-        if (percent <= 0 || percent >= 100)
+        public void UpdateMaxValue(float percent)
         {
-            return;
+            if (percent <= 0 || percent >= 100)
+            {
+                return;
+            }
+
+            UpdateMaxValueRpc(percent);
         }
-        VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
-        float maxValue = percent / 100;
-        volumeRenderedObject.SetVisibilityWindow(volumeRenderedObject.GetVisibilityWindow()[0], maxValue);
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void UpdateMaxValueRpc(float percent)
+        {
+            VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
+            float maxValue = percent / 100;
+            volumeRenderedObject.SetVisibilityWindow(volumeRenderedObject.GetVisibilityWindow()[0], maxValue);
+        }
     }
 }
