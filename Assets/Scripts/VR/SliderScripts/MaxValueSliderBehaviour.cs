@@ -7,6 +7,13 @@ namespace UnityVolumeRendering
 {
     public class MaxValueSliderBehaviour : NetworkBehaviour
     {
+        [SerializeField]
+        GameObject sliderBehaviour;
+        public void Start()
+        {
+            sliderBehaviour.GetComponent<NetworkObject>().Spawn();
+        }
+
         public void UpdateMaxValue(float percent)
         {
             if (percent <= 0 || percent >= 100)
