@@ -205,47 +205,75 @@ namespace UnityVolumeRendering
 
         private void OnGUI()
         {
+            //NETWORK PART OF THE GUI
+
+            GUILayout.BeginHorizontal();
+
             GUILayout.BeginVertical();
 
-            NetworkManager manager = GameObject.FindObjectOfType<NetworkManager>();
+            if (NetworkManager.Singleton.IsHost == true)
+            {
+                GUILayout.Label("Host mode");
+            }
+            else if (NetworkManager.Singleton.IsClient == true)
+            {
+                GUILayout.Label("Client mode");
+            }
+            else
+            {
+                GUILayout.Label("No network mode");
+            }   
 
-            if (GUILayout.Button("Create host"))
+            if (NetworkManager.Singleton.IsHost == false && NetworkManager.Singleton.IsClient == false && GUILayout.Button("Create host"))
             {
                 NetworkManager.Singleton.StartHost();
                 Debug.Log(GetLocalIPAddress());
             }
 
-            ipAddress = GUILayout.TextField(ipAddress);
-
-            if (GUILayout.Button("Join as a client"))
+            if (NetworkManager.Singleton.IsHost == false && NetworkManager.Singleton.IsClient == false && GUILayout.Button("Join as a client"))
             {
                 SetIpAddress();
                 NetworkManager.Singleton.StartClient();
             }
 
-            if (GUILayout.Button("Import DICOM dataset"))
-            {
-                RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDICOMDatasetResultVR);
-            }
+            GUILayout.Label("IP Address:");
 
-            if (GameObject.FindObjectOfType<VolumeRenderedObject>() != null && GUILayout.Button("Import Dose file"))
-            {
-                RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDoseResultVR);
-            }
-
-            // Show button for opening the dataset editor (for changing the visualisation)
-            if (GameObject.FindObjectOfType<VolumeRenderedObject>() != null && GUILayout.Button("Edit imported dataset"))
-            {
-                EditVolumeGUI.ShowWindow(GameObject.FindObjectOfType<VolumeRenderedObject>());
-            }
-
-            // Show button for opening the slicing plane editor (for changing the orientation and position)
-            if (GameObject.FindObjectOfType<SlicingPlane>() != null && GUILayout.Button("Edit slicing plane"))
-            {
-                EditSliceGUI.ShowWindow(GameObject.FindObjectOfType<SlicingPlane>());
-            }
+            ipAddress = GUILayout.TextField(ipAddress);
 
             GUILayout.EndVertical();
+
+            //DICOM PART OF THE GUI
+
+            if(NetworkManager.Singleton.IsHost == true || NetworkManager.Singleton.IsClient == true)
+            {
+                GUILayout.BeginVertical();
+
+                if (GUILayout.Button("Import DICOM dataset"))
+                {
+                    RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDICOMDatasetResultVR);
+                }
+
+                if (GameObject.FindObjectOfType<VolumeRenderedObject>() != null && GUILayout.Button("Import Dose file"))
+                {
+                    RuntimeFileBrowser.ShowOpenDirectoryDialog(OnOpenDoseResultVR);
+                }
+
+                // Show button for opening the dataset editor (for changing the visualisation)
+                if (GameObject.FindObjectOfType<VolumeRenderedObject>() != null && GUILayout.Button("Edit imported dataset"))
+                {
+                    EditVolumeGUI.ShowWindow(GameObject.FindObjectOfType<VolumeRenderedObject>());
+                }
+
+                // Show button for opening the slicing plane editor (for changing the orientation and position)
+                if (GameObject.FindObjectOfType<SlicingPlane>() != null && GUILayout.Button("Edit slicing plane"))
+                {
+                    EditSliceGUI.ShowWindow(GameObject.FindObjectOfType<SlicingPlane>());
+                }
+
+                GUILayout.EndVertical();
+            }
+
+            GUILayout.EndHorizontal();
         }
 
         private void OnOpenPARDatasetResult(RuntimeFileBrowser.DialogResult result)

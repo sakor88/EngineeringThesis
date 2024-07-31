@@ -7,13 +7,12 @@ namespace UnityVolumeRendering
 {
     public class DirectVolumeClick : NetworkBehaviour
     {
-
         public void OnButtonPress()
         {
             SetRenderModeRpc();
         }
 
-        [Rpc(SendTo.ClientsAndHost)]
+        [Rpc(SendTo.Everyone)]
         private void SetRenderModeRpc()
         {
             VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
