@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using Unity.Netcode.Components;
 using UnityEditor;
+using Unity.Collections;
 
 namespace UnityVolumeRendering
 {
@@ -35,9 +36,21 @@ namespace UnityVolumeRendering
 
         [SerializeField] private GameObject helperPrefab;
 
+        NetworkVariable<bool> isModelOnHost = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        NetworkVariable<FixedString128Bytes> seriesUID = new NetworkVariable<FixedString128Bytes>();
+
+
 
         public void OnOpenDICOMDatasetResultVR(RuntimeFileBrowser.DialogResult result)
         {
+            if (!NetworkManager.Singleton.IsHost)
+            {
+                if (!isModelOnHost.Value)
+                {
+                    return;
+                }
+            }
+
             if (!result.cancelled)
             {
                 DespawnAllDatasetsVR();
@@ -58,6 +71,17 @@ namespace UnityVolumeRendering
                 {
                     // Import single DICOM series
                     VolumeDataset dataset = importer.ImportSeries(series);
+
+                    seriesUID.Value = importer.GetSeriesUID();
+                    if (!NetworkManager.Singleton.IsHost)
+                    {
+                        if (seriesUID.Value != importer.GetSeriesUID())
+                        {
+                            Debug.Log("Series UID does not match between client and host");
+                            return;
+                        }
+                    }
+
                     VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
                     obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
@@ -80,10 +104,15 @@ namespace UnityVolumeRendering
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
 
-
                 }
             }
+
+            if (NetworkManager.Singleton.IsHost)
+            {
+                isModelOnHost.Value = true;
+            }
         }
+
 
         public void OnOpenDoseResultVR(RuntimeFileBrowser.DialogResult result)
         {

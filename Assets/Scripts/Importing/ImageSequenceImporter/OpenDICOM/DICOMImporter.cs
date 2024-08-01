@@ -47,6 +47,12 @@ namespace UnityVolumeRendering
         }
 
         private int iFallbackLoc = 0;
+        private string seriesUID = "";
+
+        public string GetSeriesUID()
+        {
+            return seriesUID;
+        }
 
         public IEnumerable<IImageSequenceSeries> LoadSeries(IEnumerable<string> fileCandidates)
         {
@@ -85,6 +91,8 @@ namespace UnityVolumeRendering
                         files.Add(sliceFile);
                 }
             }
+
+            seriesUID = files[0].seriesUID;
 
             // Split parsed DICOM files into series (by DICOM series UID)
             Dictionary<string, DICOMSeries> seriesByUID = new Dictionary<string, DICOMSeries>();

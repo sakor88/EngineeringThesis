@@ -40,5 +40,10 @@ namespace UnityVolumeRendering
         /// <param name="series">The series to import</param>
         /// <returns>Imported 3D volume dataset.</returns>
         VolumeDataset ImportSeries(IImageSequenceSeries series);
+
+        public string GetSeriesUID()
+        {
+            return "";
+        }
     }
 }
