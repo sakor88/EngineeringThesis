@@ -149,6 +149,7 @@ namespace UnityVolumeRendering
             DataElement pixelSpacing = doseFile.DataSet[PixelSpacing];
             float pixelSpacingf = (float)Convert.ToDouble(pixelSpacing.Value[0]);
 
+            // Get dose dimensions
             DataElement row = doseFile.DataSet[Rows];
             DataElement col = doseFile.DataSet[Columns];
             DataElement NoF = doseFile.DataSet[NumberOfFramesTag];
@@ -157,6 +158,8 @@ namespace UnityVolumeRendering
             doseDimY = (int)Convert.ToInt16(row.Value[0]);
             doseDimZ = (int)Convert.ToInt16(NoF.Value[0]);
 
+
+            //Adjust dimensions to take image position into account
             if (doseFile.DataSet.Contains(ImagePosition))
             {
                 DataElement elemLoc = doseFile.DataSet[ImagePosition];
@@ -174,8 +177,10 @@ namespace UnityVolumeRendering
             dataset.dimY = CTfiles[0].file.PixelData.Rows;
             dataset.dimZ = CTfiles.Count;
 
-            int dimension = dataset.dimX * dataset.dimY * dataset.dimZ;
-            dataset.data = new float[dimension];
+
+            //Number of dose voxels
+            int numberOfVoxels = dataset.dimX * dataset.dimY * dataset.dimZ;
+            dataset.data = new float[numberOfVoxels];
 
 
             Tag ImagePositionPatient = new Tag("(0020, 0032)");
@@ -191,22 +196,30 @@ namespace UnityVolumeRendering
 
             DataElement imagePosDose = doseFile.DataSet[ImagePositionPatient];
 
-            int[] startingPixelDose = new int[2];
-            startingPixelDose[0] = Convert.ToInt32(imagePosDose.Value[0]);
-            startingPixelDose[1] = Convert.ToInt32(imagePosDose.Value[1]);
 
-            int doseStartRow = startingPixelDose[0];
-            int doseStartCol = startingPixelDose[1];
+            //finding the starting pixel for the dose image
+            int doseStartRow = Convert.ToInt32(imagePosDose.Value[0]);
+            int doseStartCol = Convert.ToInt32(imagePosDose.Value[1]);
 
-            float doseEndRow = doseStartRow + pixelSpacingf * doseDimX;
-            float doseEndCol = doseStartCol + pixelSpacingf * doseDimY;
+            float doseEndRow = doseStartRow + (int)Math.Ceiling(pixelSpacingf) * doseDimY;
+            float doseEndCol = doseStartCol + (int)Math.Ceiling(pixelSpacingf) * doseDimX;
 
             int rowOffset = doseStartRow - startingPixel[0];
             int colOffset = doseStartCol - startingPixel[1];
 
+            Debug.Log("rowOffset: " + rowOffset + ", colOffset: " + colOffset);
+
+
+            //SUPER RES + CT DATA START---------------------------------------------------------------------------------------------------------------
+
             PixelData dosePixelData = doseFile.PixelData;
             int[] dosePixelArr = ToPixelArray(dosePixelData);
-            int[,,] superResPixelArr = superRes(dosePixelArr, doseDimX, doseDimY, doseDimZ,  pixelSpacingf, 1.0f);
+
+            Debug.Log("DosePixelArrMax: " + dosePixelArr.Max() + ", DosePixelArrMin: " + dosePixelArr.Min() + ", DosePixelArrAvg: " + dosePixelArr.Average());
+
+            int[,,] superResPixelArr = superRes(dosePixelArr, doseDimY, doseDimX, doseDimZ, pixelSpacingf, 1.0f);
+
+            Debug.Log(superResPixelArr.GetLength(0) + " " + superResPixelArr.GetLength(1) + " " + superResPixelArr.GetLength(2));
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
             {
@@ -223,6 +236,7 @@ namespace UnityVolumeRendering
                 if ((imageZPos <= doseZEndPos && imageZPos >= doseZStartPos) || (imageZPos >= doseZEndPos && imageZPos <= doseZStartPos))
                 {
                     int doseZIndex = (int)Math.Round((imageZPos - doseZStartPos) / sliceThickness);
+                    Debug.Log(doseZIndex);
 
                     for (int iRow = 0; iRow < CTpixelData.Rows; iRow++)
                     {
@@ -233,27 +247,35 @@ namespace UnityVolumeRendering
 
                             int realRow = startingPixel[0] + iRow;
                             int realCol = startingPixel[1] + iCol;
-                            int doseIndexX, doseIndexY, doseIndexZ;
-                            doseIndexZ = iSlice;
-
+                            int doseXIndex, doseYIndex;
 
                             if (realRow > doseStartRow && realRow < doseEndRow && realCol > doseStartCol && realCol < doseEndCol)
                             {
-                                Debug.Log("realRow:" + realRow + ", realCol: " + realCol + "pixelIndex2D:" + pixelIndex2D);
+                                //Debug.Log("realRow:" + realRow + ", realCol: " + realCol + " pixelIndex2D:" + pixelIndex2D + " dataIndex:" + dataIndex + " iRow:" + iRow + " iCol:" + iCol);
                                 if (iRow == 0)
                                 {
-                                    doseIndexX = pixelIndex2D - colOffset;
-                                    doseIndexY = 0;
+                                    doseXIndex = pixelIndex2D - colOffset;
+                                    doseYIndex = 0;
                                 }
                                 else
                                 {
-                                    doseIndexX = pixelIndex2D % iRow - colOffset;
-                                    doseIndexY = pixelIndex2D / iRow - rowOffset;
+                                    doseXIndex = iCol - colOffset - 1;
+                                    doseYIndex = iRow - rowOffset - 1;
                                 }
-                                Debug.Log("Z:" + doseIndexZ + "Y:" + doseIndexY + "X:" + doseIndexX);
-                                int pixelValue = superResPixelArr[doseIndexZ, doseIndexY, doseIndexX];
-                                float grayValue = pixelValue * 6.3e-5f;
-                                dataset.data[dataIndex] = pixelValue;
+                                //Debug.Log("Z:" + doseZIndex + "Y:" + doseYIndex + "X:" + doseXIndex);
+                                int pixelValue = superResPixelArr[doseZIndex, doseYIndex, doseXIndex];
+                                if(pixelValue < 40000)
+                                {
+                                    pixelValue = CTpixelArr[pixelIndex2D];
+                                    float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
+                                    dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
+                                }
+                                
+                                else
+                                {
+                                    float grayValue = pixelValue * 6.3e-5f;
+                                    dataset.data[dataIndex] = pixelValue;
+                                }
                             }
                             else
                             {
@@ -261,8 +283,6 @@ namespace UnityVolumeRendering
                                 float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
                                 dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
                             }
-
-
                         }
                     }
                 }
@@ -283,19 +303,49 @@ namespace UnityVolumeRendering
                     }
                 }
 
-            }
 
-            if (CTfiles[0].pixelSpacing > 0.0f)
-            {
-                dataset.scaleX = CTfiles[0].pixelSpacing * dataset.dimX;
-                dataset.scaleY = CTfiles[0].pixelSpacing * dataset.dimY;
-                dataset.scaleZ = Mathf.Abs(CTfiles[CTfiles.Count - 1].location - CTfiles[0].location);
+
+                //if (CTfiles[0].pixelSpacing > 0.0f)
+                //{
+                //    dataset.scaleX = CTfiles[0].pixelSpacing* dataset.dimX;
+                //    dataset.scaleY = CTfiles[0].pixelSpacing* dataset.dimY;
+                //    dataset.scaleZ = Mathf.Abs(CTfiles[CTfiles.Count - 1].location - CTfiles[0].location);
+                //}
+
+                
             }
 
             dataset.FixDimensions();
 
             return dataset;
 
+            //SUPER RES + CT DATA END---------------------------------------------------------------------------------------------------------------
+
+            ////ONLY DOSE TEST START---------------------------------------------------------------------------------------------------------------
+
+            //AcrNemaFile doseFile = LoadDoseFile(doseFilePath);
+
+            //PixelData data = doseFile.PixelData;
+            //Tag NumberOfFramesTag = new Tag("(0028, 0008)");
+
+            //VolumeDataset dataset = new VolumeDataset();
+            //dataset.datasetName = Path.GetFileName(doseFilePath);
+            //dataset.dimX = doseFile.PixelData.Columns * 3;
+            //dataset.dimY = doseFile.PixelData.Rows * 3;
+            //if (doseFile.DataSet.Contains(NumberOfFramesTag))
+            //{
+            //    DataElement NoF = doseFile.DataSet[NumberOfFramesTag];
+            //    dataset.dimZ = (int)Convert.ToInt16(NoF.Value[0]);
+            //    Debug.Log("dimZ: " + dataset.dimZ);
+            //}
+            //int dimension = dataset.dimX * dataset.dimY * dataset.dimZ;
+            //dataset.data = new float[dimension];
+
+            //Debug.Log("dimX: " + dataset.dimX + ", dimY: " + dataset.dimY + ", dimZ: " + dataset.dimZ + "dimension: " + dataset.data.Length);
+
+            //Tag PixelSpacing = new Tag("(0028, 0030)");
+            //DataElement pixelSpacing = doseFile.DataSet[PixelSpacing];
+            //float pixelSpacingf = (float)Convert.ToDouble(pixelSpacing.Value[0]);
 
 
             //PixelData pixelData = file.PixelData;
@@ -327,20 +377,61 @@ namespace UnityVolumeRendering
             //                dataset.scaleZ = Mathf.Abs(files[files.Count - 1].location - files[0].location);
             //            }*/
 
+            //dataset.FixDimensions();
 
-            //Create Dose data END --------------------------------------------------------------------------------
+            //return dataset;
+
+
+            //ONLY DOSE TEST END---------------------------------------------------------------------------------------------------------------
+
+            //SUPER RES TEST START---------------------------------------------------------------------------------------------------------------
+
+
+            //int doseDimY = dataset.dimY / 3;
+            //int doseDimX = dataset.dimX / 3;
+            //int doseDimZ = dataset.dimZ;
+
+            //PixelData dosePixelData = doseFile.PixelData;
+            //int[] dosePixelArr = ToPixelArray(dosePixelData);
+            //int[,,] superResPixelArr = superRes(dosePixelArr, doseDimY, doseDimX, doseDimZ, pixelSpacingf, 1.0f);
+
+            //Debug.Log(superResPixelArr.GetLength(0) + " " + superResPixelArr.GetLength(1) + " " + superResPixelArr.GetLength(2));
+
+            //for (int iZ = 0; iZ < 129; iZ++)
+            //{
+            //    for (int iRow = 0; iRow < 282; iRow++)
+            //    {
+            //        for (int iCol = 0; iCol < 477; iCol++)
+            //        {
+            //            int pixelIndex = (iZ * 282 * 477) + (iRow * 477) + iCol;
+            //            int dataIndex = (iZ * 282 * 477) + (iRow * 477) + iCol;
+
+
+
+            //            int pixelValue = superResPixelArr[iZ, iRow, iCol];
+            //            float grayValue = pixelValue * 6.3e-5f;
+
+            //            dataset.data[dataIndex] = grayValue;
+            //        }
+            //    }
+            //}
+
+            //dataset.FixDimensions();
+
+            //return dataset;
+
+            //SUPER RES TEST END---------------------------------------------------------------------------------------------------------------
 
         }
-
 
 
         int[,,] superRes(int[] originalArr, int rows, int cols, int slices, float pxSizeBefore, float pxSizeAfter)
         {
 
-            double scaleFactor = pxSizeBefore / pxSizeAfter;
+            int scaleFactor = (int) Math.Ceiling( pxSizeBefore / pxSizeAfter );
 
-            int newYDim = rows * 3;
-            int newXDim = cols * 3;
+            int newYDim = rows * scaleFactor;
+            int newXDim = cols * scaleFactor;
             int newZDim = slices;
 
             int[,,] superResArr = new int[newZDim, newYDim, newXDim];
@@ -350,9 +441,9 @@ namespace UnityVolumeRendering
 
             for (int z = 0; z < newZDim; z++)
             {
-                for (int y = 0, y_old = 0; y_old < rows; y += 3, y_old++)
+                for (int y = 0, y_old = 0; y_old < rows; y += scaleFactor, y_old++)
                 {
-                    for (int x = 0, x_old = 0; x_old < cols; x+= 3, x_old++)
+                    for (int x = 0, x_old = 0; x_old < cols; x+= scaleFactor, x_old++)
                     {
                         int internalValue = originalArr[z * cols * rows + y_old * cols + x_old];
                         superResArr[z, y, x] = internalValue;
