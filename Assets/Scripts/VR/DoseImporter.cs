@@ -198,11 +198,11 @@ namespace UnityVolumeRendering
 
 
             //finding the starting pixel for the dose image
-            int doseStartRow = Convert.ToInt32(imagePosDose.Value[0]);
-            int doseStartCol = Convert.ToInt32(imagePosDose.Value[1]);
+            int doseStartRow = Convert.ToInt32(imagePosDose.Value[1]);
+            int doseStartCol = Convert.ToInt32(imagePosDose.Value[0]);
 
-            float doseEndRow = doseStartRow + (int)Math.Ceiling(pixelSpacingf) * doseDimY;
-            float doseEndCol = doseStartCol + (int)Math.Ceiling(pixelSpacingf) * doseDimX;
+            float doseEndRow = doseStartRow + (int)Math.Ceiling(pixelSpacingf * doseDimY);
+            float doseEndCol = doseStartCol + (int)Math.Ceiling(pixelSpacingf * doseDimX);
 
             int rowOffset = doseStartRow - startingPixel[0];
             int colOffset = doseStartCol - startingPixel[1];
@@ -214,12 +214,16 @@ namespace UnityVolumeRendering
 
             PixelData dosePixelData = doseFile.PixelData;
             int[] dosePixelArr = ToPixelArray(dosePixelData);
+            StandardizeDoseArray(dosePixelArr);
 
             Debug.Log("DosePixelArrMax: " + dosePixelArr.Max() + ", DosePixelArrMin: " + dosePixelArr.Min() + ", DosePixelArrAvg: " + dosePixelArr.Average());
 
             int[,,] superResPixelArr = superRes(dosePixelArr, doseDimY, doseDimX, doseDimZ, pixelSpacingf, 1.0f);
 
             Debug.Log(superResPixelArr.GetLength(0) + " " + superResPixelArr.GetLength(1) + " " + superResPixelArr.GetLength(2));
+
+            //Remake line 226 but for superResPixelArr
+            Debug.Log("SuperResPixelArrMax: " + superResPixelArr.Cast<int>().Max() + ", SuperResPixelArrMin: " + superResPixelArr.Cast<int>().Min() + ", SuperResPixelArrAvg: " + superResPixelArr.Cast<int>().Average());
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
             {
@@ -264,16 +268,15 @@ namespace UnityVolumeRendering
                                 }
                                 //Debug.Log("Z:" + doseZIndex + "Y:" + doseYIndex + "X:" + doseXIndex);
                                 int pixelValue = superResPixelArr[doseZIndex, doseYIndex, doseXIndex];
-                                if(pixelValue < 40000)
+                                if (pixelValue < 2600)
                                 {
                                     pixelValue = CTpixelArr[pixelIndex2D];
                                     float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
                                     dataset.data[dataIndex] = Mathf.Clamp(hounsfieldValue, -1024.0f, 3071.0f);
                                 }
-                                
                                 else
                                 {
-                                    float grayValue = pixelValue * 6.3e-5f;
+                                    //float grayValue = pixelValue * 6.3e-5f;
                                     dataset.data[dataIndex] = pixelValue;
                                 }
                             }
@@ -424,59 +427,120 @@ namespace UnityVolumeRendering
 
         }
 
+        void StandardizeDoseArray(int[] dosePixelArr)
+        {
+            // Find the min and max values of the CT data
+            int ctMin = 2500;
+            int ctMax = 3071;
+
+            // Find the min and max values of the dose data
+            int doseMin = dosePixelArr.Min();
+            int doseMax = dosePixelArr.Max();
+
+            // Standardize the dose values
+            for (int i = 0; i < dosePixelArr.Length; i++)
+            {
+                // Scale the dose value to the CT range
+                dosePixelArr[i] = (dosePixelArr[i] - doseMin) * (ctMax - ctMin) / (doseMax - doseMin) + ctMin;
+            }
+        }
+
 
         int[,,] superRes(int[] originalArr, int rows, int cols, int slices, float pxSizeBefore, float pxSizeAfter)
         {
 
-            int scaleFactor = (int) Math.Ceiling( pxSizeBefore / pxSizeAfter );
+            float scaleFactor = pxSizeBefore / pxSizeAfter;
 
-            int newYDim = rows * scaleFactor;
-            int newXDim = cols * scaleFactor;
+            int newYDim = (int)Math.Ceiling(rows * scaleFactor);
+            int newXDim = (int)Math.Ceiling(cols * scaleFactor);
             int newZDim = slices;
 
             int[,,] superResArr = new int[newZDim, newYDim, newXDim];
 
             Debug.Log("scaleFactor: " + scaleFactor + ",y dim: " + newYDim + ",x dim: " + newXDim + "");
 
+            int newIncrementX = 2; 
+            int newIncrementY = 2;
 
             for (int z = 0; z < newZDim; z++)
             {
-                for (int y = 0, y_old = 0; y_old < rows; y += scaleFactor, y_old++)
+                for (int y = 0, y_old = 0; y_old < rows; y += newIncrementY, y_old++)
                 {
-                    for (int x = 0, x_old = 0; x_old < cols; x+= scaleFactor, x_old++)
+                    for (int x = 0, x_old = 0; x_old < cols; x += newIncrementX, x_old++)
                     {
-                        int internalValue = originalArr[z * cols * rows + y_old * cols + x_old];
-                        superResArr[z, y, x] = internalValue;
-                        superResArr[z, y, x+1] = internalValue;
-                        superResArr[z, y+1, x] = internalValue;
-                        superResArr[z, y+1, x+1] = internalValue;
-
-                        if(x_old < cols - 1 && y_old < rows - 1)
+                        if(newIncrementX == 2)
                         {
-                            //to the right of the original 2x2 pixel
-                            superResArr[z, y, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1]) / 2;
-                            superResArr[z, y + 1, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1]) / 2;
-
-                            //under the original 2x2 pixel
-                            superResArr[z, y + 2, x] = originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old];
-                            superResArr[z, y + 2, x + 1] = originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old];
-
-                            //in the bottom right corner of the original 2x2 pixel
-                            superResArr[z, y + 2, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1] +
-                                originalArr[z * cols * rows + (y_old + 1) * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old + 1]) / 4;
+                            newIncrementX = 3;
                         }
                         else
                         {
-                            //to the right of the original 2x2 pixel
-                            superResArr[z, y, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
-                            superResArr[z, y + 1, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                            newIncrementX = 2;
+                        }
 
-                            //under the original 2x2 pixel
-                            superResArr[z, y + 2, x] = (originalArr[z * cols * rows + y_old * cols + x_old]);
-                            superResArr[z, y + 2, x + 1] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                        if (newIncrementY == 2)
+                        {
+                            newIncrementY = 3;
+                        }
+                        else
+                        {
+                            newIncrementY = 2;
+                        }
 
-                            //in the bottom right corner of the original 2x2 pixel
-                            superResArr[z, y + 2, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+
+
+                        int internalValue = originalArr[z * cols * rows + y_old * cols + x_old];
+                        superResArr[z, y, x] = internalValue;
+                        superResArr[z, y, x + 1] = internalValue;
+                        superResArr[z, y + 1, x] = internalValue;
+                        superResArr[z, y + 1, x + 1] = internalValue;
+
+                        if (x_old < cols - 1 && y_old < rows - 1)
+                        {
+
+                            if(x_old % 2 == 0)
+                            {
+                                //to the right of the original 2x2 pixel
+                                superResArr[z, y, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1]) / 2;
+                                superResArr[z, y + 1, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1]) / 2;
+
+                                if (y_old % 2 == 0)
+                                {
+                                    //in the bottom right corner of the original 2x2 pixel
+                                    superResArr[z, y + 2, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + y_old * cols + x_old + 1] +
+                                    originalArr[z * cols * rows + (y_old + 1) * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old + 1]) / 4;
+                                }
+                            }
+                            
+                            
+                            if(y_old % 2 == 0)
+                            {
+                                //under the original 2x2 pixel
+                                superResArr[z, y + 2, x] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old]) / 2;
+                                superResArr[z, y + 2, x + 1] = (originalArr[z * cols * rows + y_old * cols + x_old] + originalArr[z * cols * rows + (y_old + 1) * cols + x_old]) / 2;
+                            }
+                            
+                        }
+                        else
+                        {
+
+                            if(cols % 2 != 0)
+                            {
+                                //to the right of the original 2x2 pixel
+                                superResArr[z, y, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                                superResArr[z, y + 1, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+
+                                if (rows % 2 != 0)
+                                {
+                                    //in the bottom right corner of the original 2x2 pixel
+                                    superResArr[z, y + 2, x + 2] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                                }
+                            }
+                            if(rows % 2 != 0)
+                            {
+                                //under the original 2x2 pixel
+                                superResArr[z, y + 2, x] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                                superResArr[z, y + 2, x + 1] = (originalArr[z * cols * rows + y_old * cols + x_old]);
+                            }
                         }
 
 
@@ -486,6 +550,8 @@ namespace UnityVolumeRendering
 
             return superResArr;
         }
+
+       
 
         private DICOMSliceFile ReadDICOMFile(string filePath)
         {

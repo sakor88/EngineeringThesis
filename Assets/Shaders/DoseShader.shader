@@ -354,18 +354,27 @@
                     }
                 }
 
+                // Threshold to distinguish between CT and RT data
+                const float densityThreshold = 0.65f;
+
                 // Write fragment output
                 frag_out output;
 
-                if (maxDensity > 0.0f)
+                if (maxDensity > densityThreshold)
                 {
-                   output.colour = float4(maxDensity, 1.0f - maxDensity, 0.0f, 0.5f);
+                    // RT data (Dose part)
+                    // Map maxDensity to a value between 0 and 1 for color interpolation
+                    float normalizedDensity = (maxDensity - densityThreshold) / (1.0f - densityThreshold);
+                    // Interpolate between green and red
+                    float3 doseColor = lerp(float3(0.0f, 1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), normalizedDensity);
+                    output.colour = float4(doseColor, 0.5); // Keeping alpha as 0.5 for visibility
                 }
                 else
                 {
+                    // CT data (Patient part)
+                    // Map maxDensity directly to alpha
                     output.colour = float4(1.0f, 1.0f, 1.0f, maxDensity);
                 }
-
                 
                 
 #if DEPTHWRITE_ON
