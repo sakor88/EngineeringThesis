@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using Unity.Netcode.Components;
 using UnityEditor;
 using Unity.Collections;
+using UnityEngine.SceneManagement;
 
 namespace UnityVolumeRendering
 {
@@ -83,11 +84,13 @@ namespace UnityVolumeRendering
                     }
 
                     VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
-                    obj.transform.position = new Vector3(-0.1f, 2.7f, 0.0f);
+                    obj.transform.position = new Vector3(-0.0f, 2.7f, 0.0f);
                     var child = obj.gameObject.transform.GetChild(0).gameObject;
 
                     // Instantiate helper prefab
                     GameObject helper = new GameObject("DicomCTVolumeRenderedObject");
+                    obj.transform.SetParent(helper.transform);
+                    child.transform.SetParent(helper.transform);
 
                     // Add collider and prepare interactable
                     child.AddComponent<BoxCollider>();
@@ -98,9 +101,14 @@ namespace UnityVolumeRendering
                     obj.CreateSlicingPlane();
                     SlicingPlane plane = FindObjectsOfType<SlicingPlane>()[0];
                     GameObject planeObj = plane.gameObject;
-                    obj.transform.SetParent(helper.transform);
-                    child.transform.SetParent(helper.transform);
-                    obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
+                    if(SceneManager.GetActiveScene().name == "TestScene")
+                    {
+                        obj.gameObject.transform.position = new Vector3(-2.25f, 2.5f, -2f);
+                    }
+                    else
+                    {
+                        obj.gameObject.transform.position = new Vector3(-0.85f, 2.5f, -1.2f);
+                    }
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
 
@@ -137,7 +145,15 @@ namespace UnityVolumeRendering
                     VolumeDataset dataset = importer.ImportSeries(series, doseFilePath);
 
                     DoseVolumeRenderedObject obj = VolumeObjectFactory.CreateDoseObject(dataset);
-                    obj.transform.position = new Vector3(2.245f, 2.63f, -1.95f);
+                    if (SceneManager.GetActiveScene().name == "TestScene")
+                    {
+                        obj.transform.position = new Vector3(2.245f, 2.63f, -1.95f); ;
+                    }
+                    else
+                    {
+                        obj.gameObject.transform.position = new Vector3(1f, 2.4f, -0.9f);
+                    }
+                    
                     obj.transform.Rotate(0, 0, -90);
 
                 }
@@ -257,6 +273,8 @@ namespace UnityVolumeRendering
             {
                 NetworkManager.Singleton.StartHost();
                 Debug.Log(GetLocalIPAddress());
+                GameObject player = GameObject.Find("Player(Clone)");
+                player.transform.position = new Vector3(-0.25f, 2.5f, 3.8f);
             }
 
             if (NetworkManager.Singleton.IsHost == false && NetworkManager.Singleton.IsClient == false && GUILayout.Button("Join as a client"))
