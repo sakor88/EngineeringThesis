@@ -9234,8 +9234,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2321230931700777055, guid: fe37ed9670a759f4982047abcdc2f0eb,
         type: 3}
+      propertyPath: initialTargetValue
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2321230931700777055, guid: fe37ed9670a759f4982047abcdc2f0eb,
+        type: 3}
       propertyPath: snapToStepOnRelease
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2321230931700777055, guid: fe37ed9670a759f4982047abcdc2f0eb,
+        type: 3}
+      propertyPath: startAtInitialTargetValue
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2321230931700777055, guid: fe37ed9670a759f4982047abcdc2f0eb,
         type: 3}

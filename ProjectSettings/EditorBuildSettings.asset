@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 0
     path: "D:/Semestr2/EngineeringThesis \u2014 kopia/Assets/Scenes/TestScene.unity"
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/newGUI.unity
+    guid: a02fdcf1b7592b145b4f8edd8472e716
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 6686054c59bcd5d47a5ca761dc4ad8fb,
       type: 2}
