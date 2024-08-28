@@ -26,7 +26,7 @@ public class ResetButton : NetworkBehaviour
             }
             if (volumeObj != null)
             {
-                volumeObj.transform.position = new Vector3(-2.25f, 2.5f, -2f);
+                volumeObj.transform.position = new Vector3(0f, 2.5f, 0f);
             }
         }
         else

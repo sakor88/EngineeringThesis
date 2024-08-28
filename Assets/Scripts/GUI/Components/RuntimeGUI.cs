@@ -39,6 +39,7 @@ namespace UnityVolumeRendering
 
         NetworkVariable<bool> isModelOnHost = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         NetworkVariable<FixedString128Bytes> seriesUID = new NetworkVariable<FixedString128Bytes>();
+        NetworkVariable<bool> labelFlag = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
 
 
@@ -79,6 +80,7 @@ namespace UnityVolumeRendering
                         if (seriesUID.Value != importer.GetSeriesUID())
                         {
                             Debug.Log("Series UID does not match between client and host");
+                            labelFlag.Value = false;
                             return;
                         }
                     }
@@ -267,7 +269,8 @@ namespace UnityVolumeRendering
             else
             {
                 GUILayout.Label("No network mode");
-            }   
+            }
+
 
             if (NetworkManager.Singleton.IsHost == false && NetworkManager.Singleton.IsClient == false && GUILayout.Button("Create host"))
             {
@@ -286,6 +289,11 @@ namespace UnityVolumeRendering
             GUILayout.Label("IP Address:");
 
             ipAddress = GUILayout.TextField(ipAddress);
+
+            if (labelFlag.Value == false)
+            {
+                GUILayout.Label("Tried to import wrong series ID on client");
+            }
 
             GUILayout.EndVertical();
 
