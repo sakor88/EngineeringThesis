@@ -459,8 +459,14 @@ namespace UnityVolumeRendering
 
             Debug.Log("scaleFactor: " + scaleFactor + ",y dim: " + newYDim + ",x dim: " + newXDim + "");
 
-            int newIncrementX = 2; 
-            int newIncrementY = 2;
+            int floor = (int)Math.Floor(scaleFactor);
+            int ceil = (int)Math.Ceiling(scaleFactor);
+
+            int newIncrementX = floor;
+            int newIncrementY = ceil;
+
+            //int newIncrementX = 2;
+            //int newIncrementY = 2;
 
             for (int z = 0; z < newZDim; z++)
             {
@@ -468,22 +474,22 @@ namespace UnityVolumeRendering
                 {
                     for (int x = 0, x_old = 0; x_old < cols; x += newIncrementX, x_old++)
                     {
-                        if(newIncrementX == 2)
+                        if(newIncrementX == floor)
                         {
-                            newIncrementX = 3;
+                            newIncrementX = ceil;
                         }
                         else
                         {
-                            newIncrementX = 2;
+                            newIncrementX = floor;
                         }
 
-                        if (newIncrementY == 2)
+                        if (newIncrementY == floor)
                         {
-                            newIncrementY = 3;
+                            newIncrementY = ceil;
                         }
                         else
                         {
-                            newIncrementY = 2;
+                            newIncrementY = floor;
                         }
 
 

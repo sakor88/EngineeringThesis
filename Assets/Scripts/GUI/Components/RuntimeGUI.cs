@@ -109,7 +109,7 @@ namespace UnityVolumeRendering
                     }
                     else
                     {
-                        obj.gameObject.transform.position = new Vector3(-0.85f, 2.5f, -1.2f);
+                        obj.gameObject.transform.position = new Vector3(-0.7f, 2.45f, -0.85f);
                     }
                     obj.gameObject.transform.localEulerAngles = new Vector3(90f, 0f, 90f);
                     plane.gameObject.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
