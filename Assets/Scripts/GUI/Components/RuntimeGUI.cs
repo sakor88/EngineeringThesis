@@ -74,10 +74,15 @@ namespace UnityVolumeRendering
                     // Import single DICOM series
                     VolumeDataset dataset = importer.ImportSeries(series);
 
-                    seriesUID.Value = importer.GetSeriesUID();
-                    if (!NetworkManager.Singleton.IsHost)
+
+                    FixedString128Bytes importedSeriesUID = importer.GetSeriesUID();
+                    if (NetworkManager.Singleton.IsHost)
                     {
-                        if (seriesUID.Value != importer.GetSeriesUID())
+                        seriesUID.Value = importedSeriesUID;
+                    }
+                    else
+                    {
+                        if (seriesUID.Value != importedSeriesUID)
                         {
                             Debug.Log("Series UID does not match between client and host");
                             labelFlag.Value = false;

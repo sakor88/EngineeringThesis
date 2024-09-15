@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using openDicom.Image;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Unity.Collections;
 
 namespace UnityVolumeRendering
 {
@@ -27,7 +28,7 @@ namespace UnityVolumeRendering
             public float intercept = 0.0f;
             public float slope = 1.0f;
             public float pixelSpacing = 0.0f;
-            public string seriesUID = "";
+            public FixedString128Bytes seriesUID = "";
             public bool missingLocation = false;
 
             public string GetFilePath()
@@ -49,7 +50,7 @@ namespace UnityVolumeRendering
         private int iFallbackLoc = 0;
         private string seriesUID = "";
 
-        public string GetSeriesUID()
+        public FixedString128Bytes GetSeriesUID()
         {
             return seriesUID;
         }

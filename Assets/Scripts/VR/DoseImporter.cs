@@ -222,7 +222,6 @@ namespace UnityVolumeRendering
 
             Debug.Log(superResPixelArr.GetLength(0) + " " + superResPixelArr.GetLength(1) + " " + superResPixelArr.GetLength(2));
 
-            //Remake line 226 but for superResPixelArr
             Debug.Log("SuperResPixelArrMax: " + superResPixelArr.Cast<int>().Max() + ", SuperResPixelArrMin: " + superResPixelArr.Cast<int>().Min() + ", SuperResPixelArrAvg: " + superResPixelArr.Cast<int>().Average());
 
             for (int iSlice = 0; iSlice < CTfiles.Count; iSlice++)
@@ -268,7 +267,7 @@ namespace UnityVolumeRendering
                                 }
                                 //Debug.Log("Z:" + doseZIndex + "Y:" + doseYIndex + "X:" + doseXIndex);
                                 int pixelValue = superResPixelArr[doseZIndex, doseYIndex, doseXIndex];
-                                if (pixelValue < 2600)
+                                if (pixelValue < 3300)
                                 {
                                     pixelValue = CTpixelArr[pixelIndex2D];
                                     float hounsfieldValue = pixelValue * slice.slope + slice.intercept;
@@ -429,9 +428,9 @@ namespace UnityVolumeRendering
 
         void StandardizeDoseArray(int[] dosePixelArr)
         {
-            // Find the min and max values of the CT data
-            int ctMin = 2500;
-            int ctMax = 3071;
+            // Find the min and max values above the CT data
+            int ctMin = 3071;
+            int ctMax = 4000;
 
             // Find the min and max values of the dose data
             int doseMin = dosePixelArr.Min();
@@ -463,7 +462,7 @@ namespace UnityVolumeRendering
             int ceil = (int)Math.Ceiling(scaleFactor);
 
             int newIncrementX = floor;
-            int newIncrementY = ceil;
+            int newIncrementY = floor;
 
             //int newIncrementX = 2;
             //int newIncrementY = 2;
