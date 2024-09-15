@@ -355,7 +355,7 @@
                 }
 
                 // Threshold to distinguish between CT and RT data
-                const float densityThreshold = 0.65f;
+                const float densityThreshold = 0.85f;
 
                 // Write fragment output
                 frag_out output;
