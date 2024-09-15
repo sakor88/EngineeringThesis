@@ -52,8 +52,10 @@ namespace UnityVolumeRendering
 
         public FixedString128Bytes GetSeriesUID128()
         {
+            Debug.Log("Series UID: " + seriesUID);
             FixedString128Bytes seriesUID128 = new FixedString128Bytes();
             seriesUID128 = seriesUID;
+            Debug.Log("Series UID128: " + seriesUID128);
             return seriesUID128;
         }
 

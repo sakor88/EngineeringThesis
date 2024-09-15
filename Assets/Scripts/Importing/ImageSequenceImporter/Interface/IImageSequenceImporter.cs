@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.Collections;
 
 namespace UnityVolumeRendering
 {
@@ -41,7 +42,7 @@ namespace UnityVolumeRendering
         /// <returns>Imported 3D volume dataset.</returns>
         VolumeDataset ImportSeries(IImageSequenceSeries series);
 
-        public string GetSeriesUID128()
+        public FixedString128Bytes GetSeriesUID128()
         {
             return "";
         }

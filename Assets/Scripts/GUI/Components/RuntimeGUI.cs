@@ -78,10 +78,13 @@ namespace UnityVolumeRendering
                     FixedString128Bytes importedSeriesUID = importer.GetSeriesUID128();
                     if (NetworkManager.Singleton.IsHost)
                     {
+                        Debug.Log("Imported series UID: " + importedSeriesUID);
                         seriesUID.Value = importedSeriesUID;
                     }
                     else
                     {
+                        Debug.Log("importowane: " + importedSeriesUID + "Na hoscie: " +  seriesUID.Value);
+
                         if (seriesUID.Value != importedSeriesUID)
                         {
                             Debug.Log("Series UID does not match between client and host");
@@ -291,7 +294,6 @@ namespace UnityVolumeRendering
             {
                 SetIpAddress();
                 NetworkManager.Singleton.StartClient();
-                moveSlidersOnHostRpc();
                 
             }
 
@@ -338,16 +340,6 @@ namespace UnityVolumeRendering
             }
 
             GUILayout.EndHorizontal();
-        }
-
-        [Rpc(SendTo.Server)]
-        void moveSlidersOnHostRpc()
-        {
-            GameObject[] toBeMoved = GameObject.FindGameObjectsWithTag("moveWhenConnected");
-            for (int i = 0; i < toBeMoved.Length; i++)
-            {
-                toBeMoved[i].transform.position.Set(toBeMoved[i].transform.position.x - 0.05f, toBeMoved[i].transform.position.y, toBeMoved[i].transform.position.z);
-            }
         }
 
 
