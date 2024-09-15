@@ -20,9 +20,14 @@ namespace UnityVolumeRendering
         [Rpc(SendTo.Everyone)]
         private void UpdateMaxValueRpc(float percent)
         {
-            VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
-            float maxValue = percent / 100;
-            volumeRenderedObject.SetVisibilityWindow(volumeRenderedObject.GetVisibilityWindow()[0], maxValue);
+
+            if(FindObjectsOfType<VolumeRenderedObject>().Length > 0)
+            {
+                VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
+                float maxValue = percent / 100;
+                volumeRenderedObject.SetVisibilityWindow(volumeRenderedObject.GetVisibilityWindow()[0], maxValue);
+            }
+
         }
     }
 }

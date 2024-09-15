@@ -20,9 +20,16 @@ namespace UnityVolumeRendering
         [Rpc(SendTo.Everyone)]
         private void UpdateMinValueRpc(float percent)
         {
-            VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
-            float minValue = percent / 100;
-            volumeRenderedObject.SetVisibilityWindow(minValue, volumeRenderedObject.GetVisibilityWindow()[1]);
+            
+
+            if (FindObjectsOfType<VolumeRenderedObject>().Length > 0)
+            {
+                VolumeRenderedObject volumeRenderedObject = FindObjectsOfType<VolumeRenderedObject>()[0];
+                float minValue = percent / 100;
+                volumeRenderedObject.SetVisibilityWindow(minValue, volumeRenderedObject.GetVisibilityWindow()[1]);
+            }
+
+            
         }
     }
 }
