@@ -346,7 +346,7 @@ namespace UnityVolumeRendering
             GameObject[] toBeMoved = GameObject.FindGameObjectsWithTag("moveWhenConnected");
             for (int i = 0; i < toBeMoved.Length; i++)
             {
-                toBeMoved[i].transform.position.Set(toBeMoved[i].transform.position.x - 0.001f, toBeMoved[i].transform.position.y, toBeMoved[i].transform.position.z);
+                toBeMoved[i].transform.position.Set(toBeMoved[i].transform.position.x - 0.05f, toBeMoved[i].transform.position.y, toBeMoved[i].transform.position.z);
             }
         }
 
