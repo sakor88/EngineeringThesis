@@ -9,7 +9,7 @@ namespace UnityVolumeRendering
     {
         public void UpdateMinValue(float percent)
         {
-            if (percent <= 0 || percent >= 100)
+            if (percent < 0 || percent > 100)
             {
                 return;
             }

@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2884654662
+  GlobalObjectIdHash: 2505804363
   InScenePlacedSourceGlobalObjectIdHash: 2884654662
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1414,7 +1414,8 @@ PrefabInstance:
       propertyPath: m_TrackingOriginMode
       value: 2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3908322436372368397, guid: c83d63619306b0845a841dd3cc213a70, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3908322436372368395, guid: c83d63619306b0845a841dd3cc213a70,
