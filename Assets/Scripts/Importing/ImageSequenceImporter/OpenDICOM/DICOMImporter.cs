@@ -28,7 +28,7 @@ namespace UnityVolumeRendering
             public float intercept = 0.0f;
             public float slope = 1.0f;
             public float pixelSpacing = 0.0f;
-            public FixedString128Bytes seriesUID = "";
+            public string seriesUID = "";
             public bool missingLocation = false;
 
             public string GetFilePath()
@@ -50,9 +50,11 @@ namespace UnityVolumeRendering
         private int iFallbackLoc = 0;
         private string seriesUID = "";
 
-        public FixedString128Bytes GetSeriesUID()
+        public FixedString128Bytes GetSeriesUID128()
         {
-            return seriesUID;
+            FixedString128Bytes seriesUID128 = new FixedString128Bytes();
+            seriesUID128 = seriesUID;
+            return seriesUID128;
         }
 
         public IEnumerable<IImageSequenceSeries> LoadSeries(IEnumerable<string> fileCandidates)

@@ -75,7 +75,7 @@ namespace UnityVolumeRendering
                     VolumeDataset dataset = importer.ImportSeries(series);
 
 
-                    FixedString128Bytes importedSeriesUID = importer.GetSeriesUID();
+                    FixedString128Bytes importedSeriesUID = importer.GetSeriesUID128();
                     if (NetworkManager.Singleton.IsHost)
                     {
                         seriesUID.Value = importedSeriesUID;
