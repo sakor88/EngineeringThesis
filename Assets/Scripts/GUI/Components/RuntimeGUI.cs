@@ -126,6 +126,8 @@ namespace UnityVolumeRendering
             {
                 isModelOnHost.Value = true;
             }
+
+            
         }
 
 
@@ -289,6 +291,8 @@ namespace UnityVolumeRendering
             {
                 SetIpAddress();
                 NetworkManager.Singleton.StartClient();
+                moveSlidersOnHostRpc();
+                
             }
 
             GUILayout.Label("IP Address:");
@@ -335,6 +339,17 @@ namespace UnityVolumeRendering
 
             GUILayout.EndHorizontal();
         }
+
+        [Rpc(SendTo.Server)]
+        void moveSlidersOnHostRpc()
+        {
+            GameObject[] toBeMoved = GameObject.FindGameObjectsWithTag("moveWhenConnected");
+            for (int i = 0; i < toBeMoved.Length; i++)
+            {
+                toBeMoved[i].transform.position.Set(toBeMoved[i].transform.position.x - 0.001f, toBeMoved[i].transform.position.y, toBeMoved[i].transform.position.z);
+            }
+        }
+
 
         private void OnOpenPARDatasetResult(RuntimeFileBrowser.DialogResult result)
         {
