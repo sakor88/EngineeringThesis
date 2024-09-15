@@ -88,9 +88,10 @@ namespace UnityVolumeRendering
                         if (seriesUID.Value != importedSeriesUID)
                         {
                             Debug.Log("Series UID does not match between client and host");
-                            labelFlag.Value = false;
+                            setLabelFlagRpc(false);
                             return;
                         }
+                        setLabelFlagRpc(true);
                     }
 
                     VolumeRenderedObject obj = VolumeObjectFactory.CreateObject(dataset);
@@ -131,6 +132,12 @@ namespace UnityVolumeRendering
             }
 
             
+        }
+
+        [Rpc(SendTo.Server)]
+        void setLabelFlagRpc(bool flag)
+        {
+            labelFlag.Value = flag;
         }
 
 
