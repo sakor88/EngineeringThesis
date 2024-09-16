@@ -49,6 +49,8 @@ namespace UnityVolumeRendering
             {
                 if (!isModelOnHost.Value)
                 {
+                    Debug.Log("Series UID does not match between client and host");
+                    setLabelFlagRpc(false);
                     return;
                 }
             }
