@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7242775502091891154}
   - component: {fileID: 6443785171259542328}
   - component: {fileID: 409354206176995389}
+  - component: {fileID: 3518904519218157934}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -83,6 +84,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3518904519218157934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325931269869319875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &1737867275701760188
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,6 +126,7 @@ GameObject:
   - component: {fileID: 382424405047039310}
   - component: {fileID: 692264440427664392}
   - component: {fileID: 5677454040361995372}
+  - component: {fileID: 2701203167789387800}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -166,6 +199,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2701203167789387800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1737867275701760188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &6752292218875658601
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +301,7 @@ GameObject:
   - component: {fileID: 4779379925048776754}
   - component: {fileID: 2010798903381966960}
   - component: {fileID: 3637130684578368163}
+  - component: {fileID: 1669555012404475799}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -309,6 +374,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1669555012404475799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8308003665688426550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &527551022312248911
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1339,19 +1435,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 382424405047039310}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3908322436372368398, guid: c83d63619306b0845a841dd3cc213a70,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3202121987582490063}
-    - targetCorrespondingSourceObject: {fileID: 5525933166607360889, guid: c83d63619306b0845a841dd3cc213a70,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3600896833792149178}
-    - targetCorrespondingSourceObject: {fileID: 7953822028573554274, guid: c83d63619306b0845a841dd3cc213a70,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4389981913314433638}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c83d63619306b0845a841dd3cc213a70, type: 3}
 --- !u!4 &686019521364778547 stripped
 Transform:
@@ -1365,129 +1449,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 8539691938468140707}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1793191781935128769 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7953822028573554274, guid: c83d63619306b0845a841dd3cc213a70,
-    type: 3}
-  m_PrefabInstance: {fileID: 8539691938468140707}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4389981913314433638
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1793191781935128769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!4 &2001194819164537415 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7874183890360767716, guid: c83d63619306b0845a841dd3cc213a70,
     type: 3}
   m_PrefabInstance: {fileID: 8539691938468140707}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &4193724803720902106 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5525933166607360889, guid: c83d63619306b0845a841dd3cc213a70,
-    type: 3}
-  m_PrefabInstance: {fileID: 8539691938468140707}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3600896833792149178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4193724803720902106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!4 &4665221371989793448 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3908322436372368395, guid: c83d63619306b0845a841dd3cc213a70,
     type: 3}
   m_PrefabInstance: {fileID: 8539691938468140707}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &4665221371989793453 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3908322436372368398, guid: c83d63619306b0845a841dd3cc213a70,
-    type: 3}
-  m_PrefabInstance: {fileID: 8539691938468140707}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3202121987582490063
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4665221371989793453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!114 &6913869906821785225 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2985909222468300842, guid: c83d63619306b0845a841dd3cc213a70,

@@ -7,6 +7,11 @@ using UnityVolumeRendering;
 
 public class ResetButton : NetworkBehaviour
 {
+    //private void Start()
+    //{
+    //    NetworkManager.Singleton.StartHost();
+    //}
+
     public void ResetClick()
     {
         ResetPositionRpc();
