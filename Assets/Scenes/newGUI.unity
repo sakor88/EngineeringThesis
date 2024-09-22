@@ -863,9 +863,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -1027,7 +1027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
   SyncPositionX: 1
-  SyncPositionY: 1
+  SyncPositionY: 0
   SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
@@ -3653,9 +3653,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -4312,9 +4312,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -5983,9 +5983,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -7043,9 +7043,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -9117,9 +9117,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -9450,7 +9450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
   SyncPositionX: 1
-  SyncPositionY: 1
+  SyncPositionY: 0
   SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
@@ -10686,9 +10686,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -13203,9 +13203,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
+  SyncPositionX: 0
   SyncPositionY: 0
-  SyncPositionZ: 0
+  SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
