@@ -1008,8 +1008,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
   SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
+  SyncPositionY: 0
+  SyncPositionZ: 0
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -1022,7 +1022,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 1
+  InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &143309468
@@ -1040,7 +1040,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 51312058
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
+  SynchronizeTransform: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
@@ -4218,8 +4218,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 565659222}
-  - component: {fileID: 565659223}
-  - component: {fileID: 565659224}
   m_Layer: 0
   m_Name: MinValueSlider
   m_TagString: Untagged
@@ -4247,58 +4245,6 @@ Transform:
   - {fileID: 2003172101}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &565659223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 565659221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1610935991
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
---- !u!114 &565659224
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 565659221}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!1 &588990292
 GameObject:
   m_ObjectHideFlags: 0
@@ -8644,18 +8590,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4538608257460414173, guid: fe37ed9670a759f4982047abcdc2f0eb,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1308303486}
-    - targetCorrespondingSourceObject: {fileID: 4538608257460414173, guid: fe37ed9670a759f4982047abcdc2f0eb,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1308303488}
-    - targetCorrespondingSourceObject: {fileID: 4538608257460414173, guid: fe37ed9670a759f4982047abcdc2f0eb,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1308303487}
     - targetCorrespondingSourceObject: {fileID: 3187683894940402393, guid: fe37ed9670a759f4982047abcdc2f0eb,
         type: 3}
       insertIndex: -1
@@ -10075,7 +10009,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 3772951386
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
+  SynchronizeTransform: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
@@ -10095,8 +10029,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
   SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
+  SyncPositionY: 0
+  SyncPositionZ: 0
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
@@ -10178,76 +10112,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!1 &1308303479 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4538608257460414173, guid: fe37ed9670a759f4982047abcdc2f0eb,
-    type: 3}
-  m_PrefabInstance: {fileID: 1044260193}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1308303486
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308303479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2544385630
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
---- !u!114 &1308303487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308303479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1308303488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308303479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 1
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!4 &1381307741 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8207990590474721287, guid: fe37ed9670a759f4982047abcdc2f0eb,
