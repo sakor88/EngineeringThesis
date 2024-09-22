@@ -8926,7 +8926,7 @@ MonoBehaviour:
   UseQuaternionSynchronization: 0
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
-  InLocalSpace: 0
+  InLocalSpace: 1
   Interpolate: 1
   SlerpPosition: 0
 --- !u!1 &1097050285
@@ -10306,7 +10306,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3187683894940402393, guid: fe37ed9670a759f4982047abcdc2f0eb,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1295993985}
+      addedObject: {fileID: 1295993990}
   m_SourcePrefab: {fileID: 100100000, guid: fe37ed9670a759f4982047abcdc2f0eb, type: 3}
 --- !u!4 &1295993981 stripped
 Transform:
@@ -10353,7 +10353,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &1295993985
+--- !u!114 &1295993990
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10362,7 +10362,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1295993983}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af85faaf63ed86e4098a1041ecfe584e, type: 3}
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UseUnreliableDeltas: 0
