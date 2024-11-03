@@ -1,5 +1,6 @@
 ﻿The project aimed to create an immersive VR application for visualizing DICOM medical imaging using Unity and the Oculus Quest 2. By leveraging volume rendering and VR-specific assets from the VRTKv4 framework, the application effectively renders 3D models of patients from DICOM data. Key functionalities include object interaction, manipulation (rotation and scaling), teleportation, and dataset adjustments, such as slicing and dose visualization.
 
+[Central table setup](images/main.png "Central Table")
 
 
 **Volume Rendering and Visualization Techniques** 
@@ -9,15 +10,15 @@
 3. **VR Interaction Setup with VRTK** 
 - **Controllers and Interactions:** Utilizing VRTK components for grabbing, snapping, and spatial button interaction enables the user to manipulate the dataset as physical objects. 
 
-
+[Central table setup](images/ui.png "Slice UI")
 
 - **Teleportation and Object Pointers:** The project uses curved and straight pointers for movement and interaction, respectively, enhancing the user experience within the virtual room. 
 
-
+[Central table setup](images/ptr.png "Usage of a pointer")
 
 - **Dose Visualization:** An experimental feature allows dose data visualization with color - coded intensity (WIP). 
 
-
+[Central table setup](images/dose.png "RT Dose Object")
 
 - **Further Developments:** Planned enhancements include verifying dose and patient data alignment and extending dose visualization onto CT models.
 
